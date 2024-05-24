@@ -1,0 +1,46 @@
+@startuml
+
+Persona --->Empleado
+Persona --->Cliente
+
+class Local {
+-ArrayList<Ropa>;
+-Caja caja;
+-hashSet<Empleado>;
+-String direccion;
+-int altura;
+-String horarios
+}
+abstract class Ropa {
+-int stock;
+-String tipo;//remera/pantalon/etc
+-String talle;//L/M/S
+-float precio;
+- String color;
+}
+abstract class Persona{
+-String nombre;
+-String apellido;
+-int dni;
+-int id;
+}
+class Empleado{
+-float salario;
+-boolean disponible;
+-String horarios;
+}
+class Cliente{
+-float historial;
+-int deudas;
+
+}
+class Caja{
+-float Cajainicio;
+-float recaudacion;
+-String empleado;
+}
+}
+
+
+
+@enduml
