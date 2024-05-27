@@ -1,7 +1,7 @@
-import Modelo.Cliente;
-import Modelo.Compra;
-import Modelo.Empleado;
-import Modelo.Ropa;
+import Modelo.Humanos.Cliente;
+import Modelo.Finanzas.Compra;
+import Modelo.Humanos.Empleado;
+import Modelo.Mercaderia.Ropa;
 
 import java.util.ArrayList;
 import java.util.Scanner;

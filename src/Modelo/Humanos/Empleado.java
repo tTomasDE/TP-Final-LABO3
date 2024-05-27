@@ -1,6 +1,6 @@
-package Modelo;
+package Modelo.Humanos;
 
-public class Empleado extends Persona{
+public class Empleado extends Persona {
 
     private double salario;
     private boolean disponible;

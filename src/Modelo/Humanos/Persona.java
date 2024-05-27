@@ -1,4 +1,4 @@
-package Modelo;
+package Modelo.Humanos;
 
 public abstract class Persona {
 

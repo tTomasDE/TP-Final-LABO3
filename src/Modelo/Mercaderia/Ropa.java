@@ -1,4 +1,4 @@
-package Modelo;
+package Modelo.Mercaderia;
 
 public class Ropa {
 

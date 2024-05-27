@@ -1,4 +1,4 @@
-package Modelo;
+package Modelo.Finanzas;
 
 import java.util.HashSet;
 
@@ -22,8 +22,10 @@ public class Caja {
         return cajaInicial;
     }
 
-    public void setCajaInicial(double cajaInicial) {
-        this.cajaInicial = cajaInicial;
+    public double retirarDinero(double aRetirar){
+        if(aRetirar<=cajaInicial){
+            cajaInicial-=aRetirar;
+        }
+        return cajaInicial;
     }
-
 }

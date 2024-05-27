@@ -1,5 +1,10 @@
 package Modelo;
 
+import Modelo.Finanzas.Caja;
+import Modelo.Finanzas.Compra;
+import Modelo.Humanos.Empleado;
+import Modelo.Mercaderia.Ropa;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 

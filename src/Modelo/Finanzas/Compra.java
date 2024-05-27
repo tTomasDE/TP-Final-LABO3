@@ -1,4 +1,8 @@
-package Modelo;
+package Modelo.Finanzas;
+
+import Modelo.Humanos.Cliente;
+import Modelo.Humanos.Empleado;
+import Modelo.Mercaderia.Ropa;
 
 import java.util.ArrayList;
 import java.util.UUID;

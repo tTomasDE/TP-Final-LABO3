@@ -1,4 +1,4 @@
-package Modelo;
+package Modelo.Mercaderia;
 
 public enum Talle {
     XS("EXTRA SMALL"),S("SMALL"),M("MEDIUM"),
