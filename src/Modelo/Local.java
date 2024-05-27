@@ -34,7 +34,7 @@ public class Local {
         this.stockRopa=new ArrayList<>();
         this.empleados= new HashSet<>();
     }
-
+///////////////////////////GETTERS Y SETTERS///////////////////////////////////////////////
     public String getDireccion() {
         return direccion;
     }
@@ -66,8 +66,10 @@ public class Local {
     public void agregarRopaAlStock (Ropa r){
         this.stockRopa.add(r);
     }
+//////////////////////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////METODOS////////////////////////////////////////////////////
     public void procesarCompra(Compra c){
-
     }
+
 }

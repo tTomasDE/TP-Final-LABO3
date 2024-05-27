@@ -28,4 +28,8 @@ public class Caja {
         }
         return cajaInicial;
     }
+    public void agregarDinero(double aAgregar){
+        cajaInicial+=aAgregar;
+    }
+
 }

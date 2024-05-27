@@ -64,6 +64,12 @@ public class Main {
         }
     } while (opcion != 4);
 }
-
+    public static void agregarRopa(){
+        System.out.println("Dime el stock:");
+        System.out.println("Dime el tipo de prenda:");
+        System.out.println("Dime el stock");
+        System.out.println("Dime el stock");
+        System.out.println("Dime el stock");
+    }
 }
 
