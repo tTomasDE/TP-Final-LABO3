@@ -59,6 +59,11 @@ public class Local {
         this.horarios = horarios;
     }
 
+//////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////METODOS////////////////////////////////////////////////////
+
+
     public void agregarEmpleado(Empleado e){
         this.empleados.add(e);
     }
@@ -66,10 +71,21 @@ public class Local {
     public void agregarRopaAlStock (Ropa r){
         this.stockRopa.add(r);
     }
-//////////////////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////METODOS////////////////////////////////////////////////////
     public void procesarCompra(Compra c){
     }
 
+    public boolean verificarDisponibilidad (String talle, String tipo){
+        boolean encontrado = false;
+
+        for(Ropa ropa : this.stockRopa){
+            if(ropa.getTalle().equalsIgnoreCase(talle) && ropa.getTipo().equalsIgnoreCase(tipo)){
+                if(ropa.getStock()>0){
+                    encontrado=true;
+                }
+            }
+        }
+
+        return encontrado;
+    }
 }
