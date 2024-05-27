@@ -1,7 +1,7 @@
 package Modelo;
 
 public class Cliente extends Persona{
-    private static int contadorId = 0;
+
     private double historialCompras;
 
     public Cliente (){
@@ -12,7 +12,6 @@ public class Cliente extends Persona{
 
     public Cliente(String nombre, String apellido, String dni, double historialCompras) {
         super(nombre, apellido, dni);
-        this.id=contadorId++;
         this.historialCompras = historialCompras;
     }
 

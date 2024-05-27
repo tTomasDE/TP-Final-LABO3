@@ -2,7 +2,6 @@ package Modelo;
 
 public class Empleado extends Persona{
 
-    private static int contadorId = 0;
     private double salario;
     private boolean disponible;
     private String horarios;
@@ -17,7 +16,6 @@ public class Empleado extends Persona{
 
     public Empleado(String nombre, String apellido, String dni, double salario, String horarios) {
         super(nombre, apellido, dni);
-        this.id=contadorId++;
         this.salario = salario;
         this.disponible=true;
         this.horarios = horarios;

@@ -3,6 +3,7 @@ package Modelo;
 public abstract class Persona {
 
     protected int id;
+    private static int contadorId = 0;
     private String nombre;
     private String apellido;
     private String dni;
@@ -15,6 +16,7 @@ public abstract class Persona {
     }
 
     public Persona(String nombre, String apellido, String dni) {
+        this.id=contadorId++;
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;

@@ -4,6 +4,7 @@ import java.util.HashSet;
 
 public class Caja {
 
+    private double cajaInicial;//Con cuanto arranca la caja en ese dia
     private double recaudacion;
 
     private HashSet<Compra> comprasDelDia;
@@ -17,5 +18,12 @@ public class Caja {
         return recaudacion;
     }
 
+    public double getCajaInicial() {
+        return cajaInicial;
+    }
+
+    public void setCajaInicial(double cajaInicial) {
+        this.cajaInicial = cajaInicial;
+    }
 
 }
