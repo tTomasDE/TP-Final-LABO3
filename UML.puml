@@ -1,45 +1,83 @@
 @startuml
 
+Local.left>IalmacenarInformacion
+
 Persona --->Empleado
+
 Persona --->Cliente
 
+Ropa..>Talle
+
+
+
 class Local {
--ArrayList<Ropa>;
--Caja caja;
--hashSet<Empleado>;
--String direccion;
--int altura;
--String horarios
+-ropa: ArrayList<Ropa>;
+-caja: Caja;
+-empleados: HashSet<Empleado>;
+-direccion: String;
+-altura: int;
+-horarios: String;
++agregarEmpleado(): void;
++eliminarEmpleado(): boolean;
++agregarRopa(): void;
++procesarCompra(): void;
++verificarDisponibilidad(): boolean;
 }
-abstract class Ropa {
--int stock;
--String tipo;//remera/pantalon/etc
--String talle;//L/M/S
--float precio;
-- String color;
+class Ropa {
+-stock: int;
+-tipo: String; //remera/pantalon/etc
+-talle: Talle;
+-precio: float;
+-colorRopa: String;
 }
 abstract class Persona{
--String nombre;
--String apellido;
--int dni;
--int id;
+-id: int;
+-nombre: String;
+-apellido: String;
+-dni: String;
 }
 class Empleado{
--float salario;
--boolean disponible;
--String horarios;
+-salario: float;
+-disponible: boolean;
+-horarios: String;
++equals(): void;
 }
 class Cliente{
--float historial;
--int deudas;
+-historial: float;
+-deudas: float;
 
 }
 class Caja{
--float Cajainicio;
--float recaudacion;
--String empleado;
+-cajaInicio: float;
+-recaudacion: float;
+-comprasDelDia: HashSet<Compra>;
++agregarCompra(): void;
 }
+
+class Compra {
+-ordenDeCompra: String;
+-cliente: Cliente;
+-itemsComprados: ArrayList<Ropa>;
+-total: float;
+-empleadoAtencion: Empleado;
++comprobante(): String;
++equals(): boolean;
 }
+
+enum Talle {
+XS,S,M,L,XL,XXL
+}
+interface IalmacenarInformacion {
+//para Archivos y/o JSON
++guardar(): void;
++cargar(): void;
+}
+
+exception StockInsuficienteException{
+
+}
+
+
 
 
 
