@@ -51,4 +51,20 @@ public class Ropa {
 
 ////////////////////////////////////////METODOS//////////////////////////////////////////////
 
+
+    @Override
+    public boolean equals(Object obj) {
+        boolean sonIguales = false;
+
+        if(obj!=null){
+            if(obj instanceof Ropa){
+                Ropa aux = (Ropa) obj;
+                if(aux.getTipo().equalsIgnoreCase(getTipo()) && aux.getTalle().equalsIgnoreCase(getTalle()) && aux.getColorRopa().equalsIgnoreCase(getColorRopa())){
+                    sonIguales=true;
+                }
+            }
+        }
+
+        return sonIguales;
+    }
 }
