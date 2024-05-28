@@ -53,6 +53,31 @@ public class Ropa {
 
 
     @Override
+    public String toString() {
+        return "Ropa{" +
+                "stock=" + stock +
+                ", tipo='" + tipo + '\'' +
+                ", talle='" + talle + '\'' +
+                ", precio=" + precio +
+                ", colorRopa='" + colorRopa + '\'' +
+                '}';
+    }
+
+    public String toCSV() {
+        return stock + "," + tipo + "," + talle + "," + precio + "," + colorRopa;
+    }
+
+    public static Ropa fromCSV(String csv) {
+        String[] parts = csv.split(",");
+        int stock = Integer.parseInt(parts[0]);
+        String prenda = parts[1];
+        String talle = parts[2];
+        double precio = Double.parseDouble(parts[3]);
+        String color = parts[4];
+        return new Ropa(stock, prenda, talle, precio, color);
+    }
+
+    @Override
     public boolean equals(Object obj) {
         boolean sonIguales = false;
 

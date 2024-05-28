@@ -47,6 +47,10 @@ public class Local {
         return horarios;
     }
 
+    public ArrayList<Ropa> getStockRopa() {
+        return stockRopa;
+    }
+
     public void setDireccion(String direccion) {
         this.direccion = direccion;
     }
