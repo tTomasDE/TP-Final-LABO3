@@ -36,8 +36,8 @@ public class Main {
     Local loc=new Local();
     //cargarRopa(loc);
     //mostrarRopa(loc.getStockRopa());
-    //guardarRopaEnArchivo(loc.getStockRopa(), "Ropa.txt");
-    mostrarRopaDesdeArchivo("Ropa.txt");
+    //guardarRopaEnArchivoBinario(loc.getStockRopa(), "Ropa.txt");
+    mostrarRopaDesdeArchivoBinario("Ropa.txt");
     }
     public static void menu(){
 
@@ -103,30 +103,25 @@ public class Main {
             }
         }
     }//Mostrar la ropa
-    public static void guardarRopaEnArchivo(ArrayList<Ropa> ropaAux, String nombreArchivo) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nombreArchivo))) {
-            for (Ropa ro : ropaAux) {
-                writer.write(ro.toCSV());
-                writer.newLine();
-            }
-            System.out.println("Ropa guardada en el archivo " + nombreArchivo);
+    public static void guardarRopaEnArchivoBinario(ArrayList<Ropa> ropaAux, String nombreArchivo) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(nombreArchivo))) {
+            oos.writeObject(ropaAux);
+            System.out.println("Ropa guardada en el archivo binario " + nombreArchivo);
         } catch (IOException e) {
-            System.err.println("Error al guardar en el archivo: " + e.getMessage());
+            System.err.println("Error al guardar en el archivo binario: " + e.getMessage());
         }
-    }//Guardar la ropa en archivo
-    public static void mostrarRopaDesdeArchivo(String nombreArchivo) {
+    }
+
+    public static void mostrarRopaDesdeArchivoBinario(String nombreArchivo) {
         ArrayList<Ropa> ropaAux = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(nombreArchivo))) {
-            String linea;
-            while ((linea = reader.readLine()) != null) {
-                Ropa ro = Ropa.fromCSV(linea);
-                ropaAux.add(ro);
-            }
-            System.out.println("Ropa cargada desde el archivo " + nombreArchivo + ":");
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nombreArchivo))) {
+            ropaAux = (ArrayList<Ropa>) ois.readObject();
+            System.out.println("Ropa cargada desde el archivo binario " + nombreArchivo + ":");
             mostrarRopa(ropaAux);
-        } catch (IOException e) {
-            System.err.println("Error al leer del archivo: " + e.getMessage());
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error al leer del archivo binario: " + e.getMessage());
         }
-    }//Mostrar ropa desde el archivo
+    }
 }
+
 
