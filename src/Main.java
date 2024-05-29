@@ -3,6 +3,7 @@ import Modelo.Finanzas.Compra;
 import Modelo.Humanos.Empleado;
 import Modelo.Local;
 import Modelo.Mercaderia.Ropa;
+import Modelo.Mercaderia.Talle;
 
 import java.io.*;
 
@@ -75,9 +76,16 @@ public class Main {
         scanner.nextLine();
         System.out.println("Dime el tipo de prenda: ");
         String prenda = scanner.nextLine();
-        System.out.println("Dime el talle: ");
-        String talle = scanner.nextLine();
-        System.out.println("Dime el precio: ");
+        System.out.println("Dime el talle (XS, S, M, L, XL, XXL): ");
+        Talle talle = null;
+        while (talle == null) {
+            try {
+                String talleInput = scanner.nextLine().toUpperCase();
+                talle = Talle.valueOf(talleInput);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Talle inválido. Intenta de nuevo: (XS, S, M, L, XL, XXL)");
+            }
+        }System.out.println("Dime el precio: ");
         double precio = scanner.nextDouble();
         scanner.nextLine();
         System.out.println("Dime el color de la prenda: ");

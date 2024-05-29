@@ -8,7 +8,7 @@ public class Ropa implements Serializable {
 
     private String tipo;
 
-    private String talle;
+    private Talle talle;
 
     private double precio;
 
@@ -17,12 +17,12 @@ public class Ropa implements Serializable {
     public Ropa() {
         this.stock = 0;
         this.tipo = "";
-        this.talle = "";
+        this.talle = null;
         this.precio = 0;
         this.colorRopa = "";
     }
 
-    public Ropa(int stock, String tipo, String talle, double precio, String colorRopa) {
+    public Ropa(int stock, String tipo, Talle talle, double precio, String colorRopa) {
         this.stock = stock;
         this.tipo = tipo;
         this.talle = talle;
@@ -38,7 +38,7 @@ public class Ropa implements Serializable {
         return tipo;
     }
 
-    public String getTalle() {
+    public Talle getTalle() {
         return talle;
     }
 
@@ -73,7 +73,7 @@ public class Ropa implements Serializable {
         if(obj!=null){
             if(obj instanceof Ropa){
                 Ropa aux = (Ropa) obj;
-                if(aux.getTipo().equalsIgnoreCase(getTipo()) && aux.getTalle().equalsIgnoreCase(getTalle()) && aux.getColorRopa().equalsIgnoreCase(getColorRopa())){
+                if(aux.getTipo().equalsIgnoreCase(getTipo()) && aux.getTalle()==getTalle() && aux.getColorRopa().equalsIgnoreCase(getColorRopa())){
                     sonIguales=true;
                 }
             }
