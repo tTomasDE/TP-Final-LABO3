@@ -15,31 +15,14 @@ public class Main {
     static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-/*
-        Empleado emp1 = new Empleado("Tomas","Denk","44145316",300.000,"09:00-18:30");
 
-        Ropa rop1 = new Ropa(1,"Remera","M",15.500,"Roja");
-        Ropa rop2 = new Ropa(15,"Pantalon","XL",35.500,"Azul");
-        Ropa rop3 = new Ropa(12,"Buzo","L",55.500,"Verde");
-
-        Local lo = new Local("Luro",2984,"03:00-10:00");
-
-        lo.agregarEmpleado(emp1);
-
-        lo.agregarRopaAlStock(rop1);
-        lo.agregarRopaAlStock(rop1);
-        lo.agregarRopaAlStock(rop1);
-        lo.agregarRopaAlStock(rop2);
-        lo.agregarRopaAlStock(rop3);
-
-        System.out.println(lo.verificarDisponibilidad("M","Remera"));
-*/
-    Local loc=new Local();
-    //cargarRopa(loc);
-    //mostrarRopa(loc.getStockRopa());
-    //guardarRopaEnArchivoBinario(loc.getStockRopa(), "Ropa.txt");
-    mostrarRopaDesdeArchivoBinario("Ropa.txt");
-    }
+        Local loc=new Local();
+        //cargarRopa(loc);
+        loc.comprarUnaRopa(agregarRopa());
+        /*mostrarRopa(loc.getStockRopa());
+        guardarRopaEnArchivoBinario(loc.getStockRopa(), "Ropa.txt");
+        mostrarRopaDesdeArchivoBinario("Ropa.txt");
+    */}
     public static void menu(){
 
     int opcion;

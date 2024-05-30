@@ -1,5 +1,7 @@
 package Modelo.Mercaderia;
 
+import Modelo.Excepciones.eSinStock;
+
 import java.io.Serializable;
 
 public class Ropa implements Serializable {
@@ -83,5 +85,11 @@ public class Ropa implements Serializable {
         }
 
         return sonIguales;
+    }
+
+    public void validarStock(int stock) throws eSinStock {
+        if (stock<=0) {
+            throw new eSinStock("No hay mas stock");
+        }
     }
 }

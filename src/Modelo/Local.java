@@ -1,5 +1,6 @@
 package Modelo;
 
+import Modelo.Excepciones.eSinStock;
 import Modelo.Finanzas.Caja;
 import Modelo.Finanzas.Compra;
 import Modelo.Humanos.Empleado;
@@ -81,11 +82,12 @@ public class Local {
     }
 
     public void comprarUnaRopa(Ropa ropa){
-        if(ropa.getStock()>0) {
+        try{
+            ropa.validarStock(ropa.getStock());
             ropa.bajarUnStock();
             caja.agregarDinero(ropa.getPrecio());
-        }else{
-            //Posible trycacht en esta funcion para advertir si no hay stock
+        }catch (eSinStock e){
+            e.printStackTrace();
         }
     }
     public void bajarUnEmpleado(Empleado emp){
