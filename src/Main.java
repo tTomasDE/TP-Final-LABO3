@@ -162,7 +162,7 @@ public class Main {
 
         Compra compra= new Compra(cliente, local.getStockRopa(), new Empleado());//El empleado ya tiene que venir cargado para despues
 
-        System.out.println("La compra: "+compra.obtenerComprobante());
+        compra.crearPDF();
 
         return compra;
     }
