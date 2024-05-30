@@ -6,7 +6,6 @@ public class Cliente extends Persona {
 
     public Cliente (){
         super();
-        this.id=0;
         this.historialCompras= 0;
     }
 

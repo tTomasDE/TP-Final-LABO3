@@ -8,7 +8,6 @@ public class Empleado extends Persona {
 
     public Empleado (){
         super();
-        this.id=0;
         this.salario = 0;
         this.disponible=false;
         this.horarios ="";

@@ -4,6 +4,7 @@ import Modelo.Finanzas.Caja;
 import Modelo.Finanzas.Compra;
 import Modelo.Humanos.Empleado;
 import Modelo.Mercaderia.Ropa;
+import Modelo.Mercaderia.Talle;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -79,11 +80,28 @@ public class Local {
     public void procesarCompra(Compra c){
     }
 
-    public boolean verificarDisponibilidad (String talle, String tipo){
+    public void comprarUnaRopa(Ropa ropa){
+        if(ropa.getStock()>0) {
+            ropa.bajarUnStock();
+            caja.agregarDinero(ropa.getPrecio());
+        }else{
+            //Posible trycacht en esta funcion para advertir si no hay stock
+        }
+    }
+    public void bajarUnEmpleado(Empleado emp){
+        emp.setDisponible(false);
+    }
+    public void subirUnEmpleado(Empleado emp){
+        emp.setDisponible(true);
+    }
+
+
+
+    public boolean verificarDisponibilidad (Talle talle, String tipo){
         boolean encontrado = false;
 
         for(Ropa ropa : this.stockRopa){
-            if(ropa.getTalle().equalsIgnoreCase(talle) && ropa.getTipo().equalsIgnoreCase(tipo)){
+            if(ropa.getTalle()==talle && ropa.getTipo().equalsIgnoreCase(tipo)){
                 if(ropa.getStock()>0){
                     encontrado=true;
                 }

@@ -65,6 +65,9 @@ public class Ropa implements Serializable {
                 '}';
     }
 
+    public void bajarUnStock(){
+        stock--;
+    }
 
     @Override
     public boolean equals(Object obj) {
