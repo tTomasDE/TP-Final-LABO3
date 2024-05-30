@@ -18,7 +18,7 @@ public class Main {
 
         Local loc=new Local();
         //cargarRopa(loc);
-        loc.comprarUnaRopa(agregarRopa());
+        cargarCompra(loc);
         /*mostrarRopa(loc.getStockRopa());
         guardarRopaEnArchivoBinario(loc.getStockRopa(), "Ropa.txt");
         mostrarRopaDesdeArchivoBinario("Ropa.txt");
@@ -60,20 +60,14 @@ public class Main {
         System.out.println("Dime el tipo de prenda: ");
         String prenda = scanner.nextLine();
         System.out.println("Dime el talle (XS, S, M, L, XL, XXL): ");
-        Talle talle = null;
-        while (talle == null) {
-            try {
-                String talleInput = scanner.nextLine().toUpperCase();
-                talle = Talle.valueOf(talleInput);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Talle inválido. Intenta de nuevo: (XS, S, M, L, XL, XXL)");
-            }
-        }System.out.println("Dime el precio: ");
+        String talleAux = scanner.nextLine().toUpperCase();
+        Talle talle = Talle.valueOf(talleAux);
+        System.out.println("Dime el precio: ");
         double precio = scanner.nextDouble();
         scanner.nextLine();
         System.out.println("Dime el color de la prenda: ");
         String color = scanner.nextLine();
-        Ropa ropaAux=new Ropa(stock, prenda, talle, precio, color);
+        Ropa ropaAux = new Ropa(stock, prenda, talle, precio, color);
         return ropaAux;
     } //Cargar una sola prenda
     public static void cargarRopa(Local localAux){
@@ -102,7 +96,6 @@ public class Main {
             System.err.println("Error al guardar en el archivo binario: " + e.getMessage());
         }
     }
-
     public static void mostrarRopaDesdeArchivoBinario(String nombreArchivo) {
         ArrayList<Ropa> ropaAux = new ArrayList<>();
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nombreArchivo))) {
@@ -113,6 +106,67 @@ public class Main {
             System.err.println("Error al leer del archivo binario: " + e.getMessage());
         }
     }
+
+    public static Empleado agregarEmpleado(){
+
+        System.out.println("Dime el apellido");
+        String apellido = scanner.nextLine();
+
+        System.out.println("Dime el nombre");
+        String nombre = scanner.nextLine();
+
+        System.out.println("Dime el dni");
+        String dni = scanner.nextLine();
+
+        System.out.println("Dime la disponibilidad: ");
+        boolean disponible = scanner.nextBoolean();
+        scanner.nextLine();
+
+        System.out.println("Dime el horario: ");
+        String horario = scanner.nextLine();
+
+        System.out.println("Dime el salario: ");
+        double salario = scanner.nextDouble();
+        scanner.nextLine();
+
+        Empleado emp = new Empleado(nombre, apellido, dni, salario, horario);
+
+        return emp;
+    }
+
+    public static Cliente agregarCliente(){
+
+        System.out.println("Dime el apellido");
+        String apellido = scanner.nextLine();
+
+        System.out.println("Dime el nombre");
+        String nombre = scanner.nextLine();
+
+        System.out.println("Dime el dni");
+        String dni = scanner.nextLine();
+
+        System.out.println("Dime el historial de compra: ");
+        double historial = scanner.nextDouble();
+        scanner.nextLine();
+
+        Cliente cliente = new Cliente (nombre, apellido, dni, historial);
+
+        return cliente;
+    }
+
+    public static Compra cargarCompra(Local local){
+
+        Cliente cliente = agregarCliente();
+
+        cargarRopa(local);//Esta se vuela
+
+        Compra compra= new Compra(cliente, local.getStockRopa(), new Empleado());//El empleado ya tiene que venir cargado para despues
+
+        System.out.println("La compra: "+compra.obtenerComprobante());
+
+        return compra;
+    }
+
 }
 
 

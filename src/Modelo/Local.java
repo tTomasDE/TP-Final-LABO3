@@ -65,7 +65,11 @@ public class Local {
         this.horarios = horarios;
     }
 
-//////////////////////////////////////////////////////////////////////////////////////////
+    public HashSet<Empleado> getEmpleados() {
+        return empleados;
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////METODOS////////////////////////////////////////////////////
 
@@ -79,6 +83,7 @@ public class Local {
     }
 
     public void procesarCompra(Compra c){
+        this.caja.agregarCompras(c);
     }
 
     public void comprarUnaRopa(Ropa ropa){
@@ -86,18 +91,19 @@ public class Local {
             ropa.validarStock(ropa.getStock());
             ropa.bajarUnStock();
             caja.agregarDinero(ropa.getPrecio());
+            caja.agregarRecaudacion(ropa.getPrecio());
         }catch (eSinStock e){
             e.printStackTrace();
         }
     }
+
     public void bajarUnEmpleado(Empleado emp){
         emp.setDisponible(false);
     }
+
     public void subirUnEmpleado(Empleado emp){
         emp.setDisponible(true);
     }
-
-
 
     public boolean verificarDisponibilidad (Talle talle, String tipo){
         boolean encontrado = false;

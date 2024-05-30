@@ -22,14 +22,24 @@ public class Caja {
         return cajaInicial;
     }
 
+
+    public void agregarCompras(Compra c){
+        this.comprasDelDia.add(c);
+    }
+
     public double retirarDinero(double aRetirar){
         if(aRetirar<=cajaInicial){
             cajaInicial-=aRetirar;
         }
         return cajaInicial;
     }
+
     public void agregarDinero(double aAgregar){
         cajaInicial+=aAgregar;
+    }
+
+    public void agregarRecaudacion(double aAgregar){
+        recaudacion+=aAgregar;
     }
 
 }

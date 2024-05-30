@@ -1,6 +1,7 @@
 package Modelo.Mercaderia;
 
 import Modelo.Excepciones.eSinStock;
+import Modelo.Excepciones.eSinTalle;
 
 import java.io.Serializable;
 
@@ -90,6 +91,12 @@ public class Ropa implements Serializable {
     public void validarStock(int stock) throws eSinStock {
         if (stock<=0) {
             throw new eSinStock("No hay mas stock");
+        }
+    }
+
+    public void validarTalle(Talle talle) throws eSinTalle {
+        if (this.talle!=talle) {
+            throw new eSinTalle("Talle incorrecto");
         }
     }
 }
