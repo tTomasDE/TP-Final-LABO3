@@ -3,6 +3,7 @@ package Modelo;
 import Modelo.Excepciones.eSinStock;
 import Modelo.Finanzas.Caja;
 import Modelo.Finanzas.Compra;
+import Modelo.Humanos.Cliente;
 import Modelo.Humanos.Empleado;
 import Modelo.Mercaderia.Ropa;
 import Modelo.Mercaderia.Talle;
@@ -18,6 +19,7 @@ public class Local {
     private Caja caja;
     private ArrayList<Ropa> stockRopa;
     private HashSet<Empleado> empleados;
+    private HashSet<Cliente> clientes;
 
     public Local() {
         this.direccion = "";
@@ -26,6 +28,7 @@ public class Local {
         this.caja=new Caja();
         this.stockRopa=new ArrayList<>();
         this.empleados= new HashSet<>();
+        this.clientes= new HashSet<>();
     }
 
     public Local(String direccion, int altura, String horarios) {
@@ -35,6 +38,7 @@ public class Local {
         this.caja=new Caja();
         this.stockRopa=new ArrayList<>();
         this.empleados= new HashSet<>();
+        this.clientes= new HashSet<>();
     }
 ///////////////////////////GETTERS Y SETTERS///////////////////////////////////////////////
     public String getDireccion() {
@@ -69,6 +73,10 @@ public class Local {
         return empleados;
     }
 
+    public HashSet<Cliente> getClientes() {
+        return clientes;
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////METODOS////////////////////////////////////////////////////
@@ -76,6 +84,10 @@ public class Local {
 
     public void agregarEmpleado(Empleado e){
         this.empleados.add(e);
+    }
+
+    public void agregarCliente(Cliente e){
+        this.clientes.add(e);
     }
 
     public void agregarRopaAlStock (Ropa r){

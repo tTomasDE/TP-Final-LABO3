@@ -18,13 +18,7 @@ public class Main {
     public static void main(String[] args) {
 
         menu();
-        //
-        //
-        //cargarCompra(loc);
-        /*mostrarRopa(loc.getStockRopa());
-        guardarRopaEnArchivoBinario(loc.getStockRopa(), "Ropa.txt");
-        mostrarRopaDesdeArchivoBinario("Ropa.txt");
-    */}
+}
     public static void menu(){
     Local loc = null;
     int opcion;
@@ -46,12 +40,15 @@ public class Main {
                     System.out.println("\nMenú de Personas:");
                     System.out.println("[1] Cargar Empleado: ");
                     System.out.println("[2] Cargar Cliente: ");
+                    System.out.println("[3] Volver al Menu: ");
                     switch (opcionAux) {
                         case 1:
+                            assert loc != null;
                             loc.agregarEmpleado(agregarEmpleado());
                             break;
                         case 2:
-                            agregarCliente();
+                            assert loc != null;
+                            loc.agregarCliente(agregarCliente());
                             break;
                         default:
                             break;
@@ -59,7 +56,7 @@ public class Main {
                 }while(opcionAux != 3);
                 break;
             case 3:
-                agregarEmpleado();
+
                 break;
             case 4:
 
@@ -190,7 +187,6 @@ public class Main {
 
     public static Compra cargarCompra(Local local){
 
-        Cliente cliente = agregarCliente();
         Iterator<Empleado> it = local.getEmpleados().iterator();
         Empleado empleado = null;
         if (it.hasNext()) {
@@ -199,12 +195,26 @@ public class Main {
             // x si no hay empleados en el local
             throw new IllegalStateException("No hay empleados disponibles en el local.");
         }
-        Compra compra= new Compra(cliente, local.getStockRopa(), empleado);
-
-        compra.crearPDF(local);
+        Compra compra= new Compra(local.getStockRopa(), empleado);
 
         return compra;
     }
+
+    public static void comprobante(Local local, Compra compra)
+    {
+        Iterator<Cliente> it = local.getClientes().iterator();
+        Cliente cliente = null;
+        if (it.hasNext()) {
+            cliente = it.next();
+        } else {
+            // x si no hay Cliente en el local
+            throw new IllegalStateException("No hay clientes disponibles en el local.");
+        }
+
+        compra.crearPDF(local, cliente);
+
+    }
+
 
 }
 
