@@ -8,6 +8,7 @@ import Modelo.Mercaderia.Talle;
 import java.io.*;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Scanner;
 
 public class Main {
@@ -16,33 +17,49 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Local loc=new Local();
-        //cargarRopa(loc);
-        cargarCompra(loc);
+        menu();
+        //
+        //
+        //cargarCompra(loc);
         /*mostrarRopa(loc.getStockRopa());
         guardarRopaEnArchivoBinario(loc.getStockRopa(), "Ropa.txt");
         mostrarRopaDesdeArchivoBinario("Ropa.txt");
     */}
     public static void menu(){
-
+    Local loc = null;
     int opcion;
     do {
         System.out.println("\nMenú:");
-        System.out.println("[1] ");
-        System.out.println("[2] ");
-        System.out.println("[3] ");
+        System.out.println("[1] Cargar local: ");
+        System.out.println("[2] Cargar personas: ");
+        System.out.println("[3] Cargar ropa");
         System.out.println("[4] Salir");
         System.out.print("Ingrese su opción: ");
         opcion = scanner.nextInt();
         switch (opcion) {
             case 1:
-
+                loc=cargarLocal();
                 break;
             case 2:
-
+                int opcionAux = scanner.nextInt();
+                do {
+                    System.out.println("\nMenú de Personas:");
+                    System.out.println("[1] Cargar Empleado: ");
+                    System.out.println("[2] Cargar Cliente: ");
+                    switch (opcionAux) {
+                        case 1:
+                            loc.agregarEmpleado(agregarEmpleado());
+                            break;
+                        case 2:
+                            agregarCliente();
+                            break;
+                        default:
+                            break;
+                    }
+                }while(opcionAux != 3);
                 break;
             case 3:
-
+                agregarEmpleado();
                 break;
             case 4:
 
@@ -154,13 +171,35 @@ public class Main {
         return cliente;
     }
 
+    public static Local cargarLocal(){
+
+        System.out.println("Decime la calle del local: ");
+        String direccion = scanner.nextLine();
+
+        System.out.println("Decime la altura: ");
+        int altura = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.println("Decime el horario de atencion: ");
+        String horario = scanner.nextLine();
+
+        Local local = new Local(direccion, altura, horario);
+
+        return local;
+    }
+
     public static Compra cargarCompra(Local local){
 
         Cliente cliente = agregarCliente();
-
-        cargarRopa(local);//Esta se vuela
-
-        Compra compra= new Compra(cliente, local.getStockRopa(), new Empleado());//El empleado ya tiene que venir cargado para despues
+        Iterator<Empleado> it = local.getEmpleados().iterator();
+        Empleado empleado = null;
+        if (it.hasNext()) {
+            empleado = it.next();
+        } else {
+            // x si no hay empleados en el local
+            throw new IllegalStateException("No hay empleados disponibles en el local.");
+        }
+        Compra compra= new Compra(cliente, local.getStockRopa(), empleado);
 
         compra.crearPDF();
 
