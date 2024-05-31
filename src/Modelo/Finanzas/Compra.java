@@ -2,14 +2,16 @@ package Modelo.Finanzas;
 
 import Modelo.Humanos.Cliente;
 import Modelo.Humanos.Empleado;
+import Modelo.Local;
 import Modelo.Mercaderia.Ropa;
-
 import java.util.ArrayList;
 import java.util.UUID;
-
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
 import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.ColumnText;
+import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfWriter;
 import java.awt.*;
 import java.io.File;
@@ -17,6 +19,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import com.lowagie.text.Image;
+
 public class Compra {
 
     private String ordenDeCompra;
@@ -24,7 +28,7 @@ public class Compra {
     private ArrayList<Ropa> itemsComprados;
     private double total;
     private Empleado empleadoAtencion;
-
+    
     public Compra(Cliente cliente, ArrayList<Ropa> itemsComprados, Empleado empleadoAtencion) {
         this.ordenDeCompra=calcularOrdenDeCompra();
         this.cliente = cliente;
@@ -64,9 +68,9 @@ public class Compra {
         return this.empleadoAtencion.getNombre()+" "+this.empleadoAtencion.getApellido();
     }
 
-    public void crearPDF (){
-        LocalDate fechaActual = LocalDate.now();
+    public void crearPDF (Local local){
 
+        LocalDate fechaActual = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String fechaFormateada = fechaActual.format(formatter);
 
@@ -74,41 +78,68 @@ public class Compra {
         String folderPath = currentDir + "/Comprobantes";
         String filePath = folderPath + "/"+fechaFormateada+"---"+this.cliente.getApellido()+"_"+this.cliente.getNombre()+".pdf";
 
-
         File folder = new File(folderPath);
         if (!folder.exists()) {
             folder.mkdirs();
         }
 
-        String contenido = "NOMBRE DEL LOCAL" +
-                "\nDireccion: Av Independencia 2940" +
-                "\nHorarios: 09:00-18:00" +
-                "\n\n----------------------------------------------------------------------------------------------------------------------------------\n" +
-                "                                                                 RECIBO DE PAGO                \n" +
-                "----------------------------------------------------------------------------------------------------------------------------------\n\n" +
-                "Fecha: " + fechaFormateada + "\n\n" +
-                "Orden de compra nro: "+getOrdenDeCompra()+"\n\n" +
-                "Cliente: "+this.cliente.getApellido()+" "+this.cliente.getNombre()+"\n\n" +"----------------------------------------------------------------------------------------------------------------------------------"+
-                "\n\nItems Comprados: \n\n" +
-                getItemsComprados()
-                +
-                "\n\n\n\n\n\n\n\n----------------------------------------------------------------------------------------------------------------------------------\n" +
-                "\nTOTAL: $"+this.calcularTotal()+"\n" +
-                "\nEmpleado: Juan García\n" +
-                "\n----------------------------------------------------------------------------------------------------------------------------------\n\n";
-
         Document document = new Document();
 
         try {
 
-            PdfWriter.getInstance(document, new FileOutputStream(filePath));
-
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(filePath));
 
             document.open();
 
+            PdfContentByte cb = writer.getDirectContent();
 
-            document.add(new Paragraph(contenido));
+            try {
+                String imagePath = currentDir + "/logo.png";
+                Image logo = Image.getInstance(imagePath);
+                logo.setAbsolutePosition(466, 750);
+                logo.scaleToFit(80, 80);
+                document.add(logo);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
+            document.add(new Paragraph("LOCAL VENTA DE ROPA\nDireccion: "+local.getDireccion()+" "+local.getAltura()+"\nHorarios: "+local.getHorarios()+"\n\n"));
+
+            cb.setLineWidth(1f);
+            cb.moveTo(36, 740);
+            cb.lineTo(559, 740);
+            cb.stroke();
+
+            document.add(new Paragraph("                                                              RECIBO DE PAGO\n\n"));
+
+            cb.setLineWidth(1f);
+            cb.moveTo(36, 700);
+            cb.lineTo(559, 700);
+            cb.stroke();
+
+            document.add(new Paragraph("\nOrden de compra: "+getOrdenDeCompra()+"\n\n"+"Fecha: " + fechaFormateada + "\n\nCliente: "+this.cliente.getApellido()+" "+this.cliente.getNombre()+"\n\n"));
+
+            cb.setLineWidth(1f);
+            cb.moveTo(36, 575);
+            cb.lineTo(559, 575);
+            cb.stroke();
+
+            document.add(new Paragraph("Items Comprados:\n\n"+getItemsComprados()));
+
+            cb.setLineWidth(1f);
+            float x = 36;
+            float y = 540;
+            float width = 523;
+            float height = 450;
+            cb.rectangle(x, y - height, width, height);
+            cb.stroke();
+
+            cb.setLineWidth(1f);
+            cb.moveTo(36, 140);
+            cb.lineTo(559, 140);
+            cb.stroke();
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Paragraph(" TOTAL: $"+calcularTotal()), 36, 120, 0);
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Paragraph(" Empleado: "+this.empleadoAtencion.getApellido()+" "+this.empleadoAtencion.getNombre()), 36, 105, 0);
 
             document.close();
 

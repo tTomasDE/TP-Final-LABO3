@@ -201,7 +201,7 @@ public class Main {
         }
         Compra compra= new Compra(cliente, local.getStockRopa(), empleado);
 
-        compra.crearPDF();
+        compra.crearPDF(local);
 
         return compra;
     }
