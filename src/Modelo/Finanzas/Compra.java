@@ -6,9 +6,8 @@ import Modelo.Local;
 import Modelo.Mercaderia.Ropa;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
+
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
@@ -27,52 +26,54 @@ import com.lowagie.text.Image;
 public class Compra implements Serializable {
 
     private String ordenDeCompra;
-    private HashSet<Ropa> itemsComprados;
+    private HashMap<Ropa, Integer> itemsComprados;
     private double total;
-    private Empleado empleadoAtencion;
     private String fechaDeCompra;
 
     public Compra() {
     }
-    public Compra(HashSet<Ropa> itemsComprados, Empleado empleadoAtencion) {
+    public Compra(HashMap<Ropa, Integer> itemsComprados) {
         this.ordenDeCompra=calcularOrdenDeCompra();
         this.itemsComprados = itemsComprados;
         this.total = calcularTotal();
-        this.empleadoAtencion = empleadoAtencion;
         this.fechaDeCompra=calcularFecha();
     }
-
     public String getOrdenDeCompra (){
         return this.ordenDeCompra;
     }
-
-    public HashSet<Ropa> getItemsComprados() {
+    public HashMap<Ropa, Integer> getItemsComprados() {
         return itemsComprados;
     }
-
-    public String imprimirItemsComprados(){
-        String info="\n";
-        for(Ropa ro : this.itemsComprados){
-            if(ro.isDisponibilidad()){
-                info+=ro.toString();
+    public String imprimirItemsComprados() {
+        StringBuilder info = new StringBuilder("\n");
+        for (Map.Entry<Ropa, Integer> entry : itemsComprados.entrySet()) {
+            Ropa prenda = entry.getKey();
+            int cantidad = entry.getValue();
+            if (prenda.isDisponibilidad()) {
+                info.append(prenda.toStringParaListaDeCompra());
+                if (cantidad > 1) {
+                    info.append(" x").append(cantidad).append("\n");
+                } else {
+                    info.append("\n");
+                }
             }
         }
-        return info;
+        return info.toString();
     }
+
     public double getTotal() {
         return total;
-    }
-    public String getEmpleadoAtencion(){
-        return this.empleadoAtencion.getNombre()+" "+this.empleadoAtencion.getApellido();
     }
     public String getFechaDeCompra() {
         return fechaDeCompra;
     }
-    public double calcularTotal (){
-        double total=0;
+    public double calcularTotal() {
+        double total = 0;
 
-        for (Ropa ro : this.itemsComprados){
-            total+=ro.getPrecio();
+        for (Map.Entry<Ropa, Integer> entry : itemsComprados.entrySet()) {
+            Ropa prenda = entry.getKey();
+            int cantidad = entry.getValue();
+            total += prenda.getPrecio() * cantidad;
         }
 
         return total;
@@ -86,12 +87,17 @@ public class Compra implements Serializable {
         String fechaFormateada = fechaActual.format(formatter);
         return fechaFormateada;
     }
-    public void agregarItems(Ropa ro){
-        this.itemsComprados.add(ro);
+    public void agregarItems(Ropa ro) {
+        int cantidad = itemsComprados.getOrDefault(ro, 0); // Obtener la cantidad actual de la prenda
+        itemsComprados.put(ro, cantidad + 1); // Incrementar la cantidad o agregar una nueva entrada
     }
-
     public void eliminarItem(Ropa item) {
-        itemsComprados.remove(item);
+        int cantidad = itemsComprados.getOrDefault(item, 0);
+        if (cantidad > 1) {
+            itemsComprados.put(item, cantidad - 1);
+        } else if (cantidad == 1) {
+            itemsComprados.remove(item);
+        }
     }
     public void crearPDF (Local local, Cliente cliente){
 
@@ -161,8 +167,6 @@ public class Compra implements Serializable {
             cb.lineTo(559, 140);
             cb.stroke();
             ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Paragraph(" TOTAL: $"+calcularTotal()), 36, 120, 0);
-            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Paragraph(" Empleado: "+this.empleadoAtencion.getApellido()+" "+this.empleadoAtencion.getNombre()), 36, 105, 0);
-
             document.close();
 
             if (Desktop.isDesktopSupported()) {

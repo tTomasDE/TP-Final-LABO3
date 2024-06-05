@@ -9,7 +9,6 @@ import java.util.Map;
 
 public class Caja implements Serializable {
 
-    private double cajaInicial;
     private double recaudacion;
     private HashMap<String, Double> retirosPorFecha;
 
@@ -21,16 +20,12 @@ public class Caja implements Serializable {
     public double getRecaudacion() {
         return recaudacion;
     }
-    public double getCajaInicial() {
-        return cajaInicial;
-    }
     private String calcularFecha(){
         LocalDate fechaActual = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String fechaFormateada = fechaActual.format(formatter);
         return fechaFormateada;
     }
-
     public void retirarDinero(double aRetirar) {
         if (aRetirar <= recaudacion) {
             recaudacion -= aRetirar;
@@ -38,7 +33,6 @@ public class Caja implements Serializable {
             retirosPorFecha.put(fechaActual, aRetirar);
         }
     }
-
     public String obtenerRetirosPorFecha() {
         String retiros = "Retiros por Fecha:\n";
         for (Map.Entry<String, Double> entry : retirosPorFecha.entrySet()) {
@@ -47,9 +41,6 @@ public class Caja implements Serializable {
             retiros += "Fecha: " + fecha + ", Cantidad Retirada: " + cantidad + "\n";
         }
         return retiros;
-    }
-    public void agregarDinero(double aAgregar){
-        cajaInicial+=aAgregar;
     }
     public void agregarRecaudacion(double aAgregar){
         recaudacion+=aAgregar;

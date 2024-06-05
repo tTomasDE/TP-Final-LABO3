@@ -15,6 +15,7 @@ public class Ropa implements Serializable {
     private double precio;
     private String colorRopa;
     private boolean disponibilidad;
+
     public Ropa() {
         this.stock = 0;
         this.tipo = "";
@@ -38,11 +39,9 @@ public class Ropa implements Serializable {
     public int getStock() {
         return stock;
     }
-
     public void setStock(int stock) {
         this.stock = stock;
     }
-
     public String getTipo() {
         return tipo;
     }
@@ -76,6 +75,9 @@ public class Ropa implements Serializable {
     public String toString() {
         return "| ID: "+getId() + "| Stock : " + stock + " |  Tipo: " + tipo +   " | Talle: " + talle  + " | Precio: " + precio + " | Color de Ropa: " + colorRopa + " |\n" ;
     }
+    public String toStringParaListaDeCompra() {
+        return "-ID: "+getId() + " -- Tipo: " + tipo +   " -- Talle: " + talle  + " -- Precio: " + precio + " -- Color de Ropa: " + colorRopa + " " ;
+    }
     public void bajarUnStock(){
         stock--;
     }
@@ -84,18 +86,10 @@ public class Ropa implements Serializable {
     }
     @Override
     public boolean equals(Object obj) {
-        boolean sonIguales = false;
-
-        if(obj!=null){
-            if(obj instanceof Ropa){
-                Ropa aux = (Ropa) obj;
-                if(aux.getTipo().equalsIgnoreCase(getTipo()) && aux.getTalle()==getTalle() && aux.getColorRopa().equalsIgnoreCase(getColorRopa())){
-                    sonIguales=true;
-                }
-            }
-        }
-
-        return sonIguales;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Ropa ropa = (Ropa) obj;
+        return id == ropa.id; // Comparar usando el campo ID
     }
     public void validarStock(int stock) throws eSinStock {
         if (stock<=0) {
@@ -107,9 +101,8 @@ public class Ropa implements Serializable {
             throw new eSinTalle("Talle incorrecto");
         }
     }
-
     @Override
     public int hashCode() {
-        return Objects.hash(id, stock, tipo, talle, precio, colorRopa, disponibilidad);
+        return Objects.hash(id); // Usar solo el campo ID para el hashCode
     }
 }

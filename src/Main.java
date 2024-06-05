@@ -5,9 +5,7 @@ import Modelo.Local;
 import Modelo.Mercaderia.Ropa;
 import Modelo.Mercaderia.Talle;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
@@ -216,7 +214,11 @@ public class Main {
                     local.AgregarLocalAlArchivo();
                     break;
                 case 2:
-
+                    local.ObtenerLocalDelArchivo();
+                    System.out.println("Ingrese la cantidad que desea Agregar: ");
+                    double agregar= scanner.nextDouble();
+                    local.agregarRecaudacion(agregar);
+                    local.AgregarLocalAlArchivo();
                     break;
                 case 3:
                     local.ObtenerLocalDelArchivo();
@@ -393,11 +395,12 @@ public class Main {
             System.out.println("\n--- Gestion de Stock del Local: \n");
             System.out.println("[1] Ingresar Ropa al Stock\n");
             System.out.println("[2] Ver el Stock Disponible\n");
-            System.out.println("[3] Filtrar Stock de Ropa\n");
-            System.out.println("[4] Dar de Baja Ropa del Stock\n");
-            System.out.println("[5] Dar de Alta Ropa del Stock\n");
-            System.out.println("[6] Exportar el Stock de Ropa en Formarto .JSON\n");
-            System.out.println("[7] Volver al Menu de Gestion del Local\n");
+            System.out.println("[3] Devolucion de Ropa\n");
+            System.out.println("[4] Filtrar Stock de Ropa\n");
+            System.out.println("[5] Dar de Baja Ropa del Stock\n");
+            System.out.println("[6] Dar de Alta Ropa del Stock\n");
+            System.out.println("[7] Exportar el Stock de Ropa en Formarto .JSON\n");
+            System.out.println("[8] Volver al Menu de Gestion del Local\n");
             System.out.print("Ingrese su opción: ");
 
             int opcion = scanner.nextInt();
@@ -411,9 +414,13 @@ public class Main {
                     System.out.println(local.mostrarStockRopa());
                     break;
                 case 3:
-                    subMenuVerificacionStock(local);
+                    local.ObtenerRopaDelArchivo();
+                    devolverRopa(local);
                     break;
                 case 4:
+                    subMenuVerificacionStock(local);
+                    break;
+                case 5:
                     local.ObtenerRopaDelArchivo();
                     System.out.println(local.mostrarStockRopa());
                     System.out.println("Seleccione el ID de la Prenda que Desea dar de Baja:");
@@ -426,7 +433,7 @@ public class Main {
                         System.out.println("\nAccion Realizada con Exito! ");
                     }
                     break;
-                case 5:
+                case 6:
                     if (!local.hayRopaDadaDeBaja()) {
                         System.out.println("No hay ropa para dar de alta.");
                     } else {
@@ -443,10 +450,10 @@ public class Main {
                         }
                         }
                     break;
-                case 6:
+                case 7:
 
                     break;
-                case 7:
+                case 8:
                     salir = true;
                     break;
                 default:
@@ -490,35 +497,31 @@ public class Main {
             }
             }
     }
-    public static void menuRealizarCompra(Local local){
-
+    public static void menuRealizarCompra(Local local) {
         scanner.nextLine();
 
         System.out.println("Ingrese el DNI: ");
-        String buscarDni= scanner.nextLine();
+        String buscarDni = scanner.nextLine();
 
         local.ObtenerClientesDelArchivo();
 
-        Cliente cliente=local.buscarClientePorDni(buscarDni);
+        Cliente cliente = local.buscarClientePorDni(buscarDni);
 
-        if(cliente==null) {
-            cliente = agregarCliente();
-        }
-        else{
+        if (cliente == null) {
+            cliente = agregarCliente(buscarDni);
+        } else {
             System.out.println(cliente.mostrarHistorial());
         }
 
-        HashSet<Ropa> lista=crearListaDeCompras(local);
+        HashMap<Ropa, Integer> prendasSeleccionadas = crearListaDeCompras(local);
+        Compra compra = new Compra(prendasSeleccionadas);
 
-        Compra compra= new Compra(lista,new Empleado());
-
-        subMenuRealizarCompra(local,cliente,compra);
-
+        subMenuRealizarCompra(local, cliente, compra);
     }
-    public static void subMenuRealizarCompra(Local local, Cliente cliente, Compra compra){
-        boolean salir=false;
+    public static void subMenuRealizarCompra(Local local, Cliente cliente, Compra compra) {
+        boolean salir = false;
 
-        while(!salir){
+        while (!salir) {
             System.out.println("\n---------------------------------------------------\n");
             System.out.println("\n-- Gestion de la Compra: \n");
             System.out.println("[1] Ver la Lista de Compra\n");
@@ -528,14 +531,14 @@ public class Main {
 
             int opcion = scanner.nextInt();
             System.out.println("\n");
-            switch (opcion){
+            switch (opcion) {
                 case 1:
                     System.out.println(compra.imprimirItemsComprados());
                     break;
                 case 2:
                     boolean editarLista = true;
                     while (editarLista) {
-                        System.out.println("Seleccione una opcion: \n");
+                        System.out.println("Seleccione una opción: \n");
                         System.out.println("[1] Agregar prenda\n");
                         System.out.println("[2] Eliminar prenda\n");
                         System.out.println("[3] Finalizar edición\n");
@@ -556,27 +559,23 @@ public class Main {
                                 }
                                 break;
                             case 2:
-                                if (compra.getItemsComprados().isEmpty()) {
-                                    System.out.println("La lista de compra está vacía.");
+                                System.out.println("Lista de compra actual:");
+                                System.out.println(compra.imprimirItemsComprados());
+                                System.out.print("Ingrese el ID de la prenda que desea eliminar: ");
+                                int idPrendaEliminar = scanner.nextInt();
+                                Ropa prendaAEliminar = null;
+                                for (Map.Entry<Ropa, Integer> entry : compra.getItemsComprados().entrySet()) {
+                                    if (entry.getKey().getId() == idPrendaEliminar) {
+                                        prendaAEliminar = entry.getKey();
+                                        break;
+                                    }
+                                }
+                                if (prendaAEliminar != null) {
+                                    compra.eliminarItem(prendaAEliminar);
+                                    System.out.println("Prenda eliminada de la lista de compra.");
+                                    prendaAEliminar.subirUnStock();
                                 } else {
-                                    System.out.println("Lista de compra actual:");
-                                    System.out.println(compra.imprimirItemsComprados());
-                                    System.out.print("Ingrese el ID de la prenda que desea eliminar: ");
-                                    int idPrendaEliminar = scanner.nextInt();
-                                    Ropa prendaAEliminar = null;
-                                    for (Ropa prenda : compra.getItemsComprados()) {
-                                        if (prenda.getId() == idPrendaEliminar) {
-                                            prendaAEliminar = prenda;
-                                            break;
-                                        }
-                                    }
-                                    if (prendaAEliminar != null) {
-                                        compra.eliminarItem(prendaAEliminar);
-                                        System.out.println("Prenda eliminada de la lista de compra.");
-                                        prendaAEliminar.subirUnStock();
-                                    } else {
-                                        System.out.println("No se encontró la prenda en la lista de compra.");
-                                    }
+                                    System.out.println("No se encontró la prenda en la lista de compra.");
                                 }
                                 break;
                             case 3:
@@ -589,16 +588,17 @@ public class Main {
                     }
                     break;
                 case 3:
-                    salir=true;
+                    salir = true;
                     cliente.setCompra(compra);
                     local.agregarRecaudacion(compra.getTotal());
+                    local.AgregarLocalAlArchivo();
                     cliente.agregarAlHistorialDeCompras(compra);
                     local.agregarCliente(cliente);
                     local.AgregarClientesAlArchivo();
-                    compra.crearPDF(local,cliente);
+                    compra.crearPDF(local, cliente);
                     break;
                 default:
-                    System.out.println("\nOpcion no valida. Por favor,Ingrese de nuevo la opcion que desea\n");
+                    System.out.println("\nOpción no válida. Por favor, ingrese de nuevo la opción que desea\n");
                     System.out.println("\n\n\n\n");
                     break;
             }
@@ -664,7 +664,7 @@ public class Main {
         }
         localAux.AgregarEmpleadosAlArchivo();
     }
-    public static Cliente agregarCliente(){
+    public static Cliente agregarCliente(String dni){
         System.out.println("------Inicio Registro Cliente------\n");
 
         System.out.println("Dime el apellido");
@@ -673,41 +673,37 @@ public class Main {
         System.out.println("Dime el nombre");
         String nombre = scanner.nextLine();
 
-        System.out.println("Dime el dni");
-        String dni = scanner.nextLine();
-
         Cliente cliente = new Cliente (nombre, apellido, dni);
         System.out.println("------Cliente Registrado Exitosamente!------\n");
         return cliente;
     }
-    public static HashSet<Ropa> crearListaDeCompras(Local local){
-
-        HashSet <Ropa> prendasSeleccionadas= new HashSet<>();
+    public static HashMap<Ropa, Integer> crearListaDeCompras(Local local) {
+        HashMap<Ropa, Integer> prendasSeleccionadas = new HashMap<>();
 
         int op = 0;
         System.out.println("------Inicio Lista de Compras------\n");
 
-        while(op==0){
+        while (op == 0) {
+            local.ObtenerRopaDelArchivo();
 
-        local.ObtenerRopaDelArchivo();
+            System.out.println(local.mostrarStockRopa());
+            System.out.println("Seleccione el ID de la Prenda que desea:");
 
-        System.out.println(local.mostrarStockRopa());
+            int index = scanner.nextInt();
+            scanner.nextLine();
 
-        System.out.println("Seleccione el ID de la Prenda que desea:");
-
-        int index= scanner.nextInt();
-        scanner.nextLine();
-
-        Ropa seleccionada = local.buscarRopaPorId(index);
+            Ropa seleccionada = local.buscarRopaPorId(index);
 
             if (seleccionada != null && seleccionada.isDisponibilidad()) {
-
                 if (seleccionada.getStock() > 0) {
-
-                    prendasSeleccionadas.add(seleccionada);
+                    if (prendasSeleccionadas.containsKey(seleccionada)) {
+                        int cantidad = prendasSeleccionadas.get(seleccionada);
+                        prendasSeleccionadas.put(seleccionada, cantidad + 1);
+                    } else {
+                        prendasSeleccionadas.put(seleccionada, 1);
+                    }
 
                     seleccionada.bajarUnStock();
-
                     local.AgregarRopaAlArchivo();
                 } else {
                     System.out.println("No hay stock disponible para la prenda seleccionada.");
@@ -716,9 +712,8 @@ public class Main {
                 System.out.println("La prenda seleccionada no está disponible.");
             }
 
-
-            System.out.print("¿Desea seleccionar otra prenda? Pulse 0 si asi lo desea : ");
-        op=scanner.nextInt();
+            System.out.print("¿Desea seleccionar otra prenda? Pulse 0 si así lo desea : ");
+            op = scanner.nextInt();
         }
 
         return prendasSeleccionadas;
@@ -748,8 +743,35 @@ public class Main {
         local.ObtenerRopaDelArchivo();
         System.out.println(local.filtrarRopaPorColor(color));
     }
+    public static void devolverRopa(Local local) {
+        System.out.println("\n--- Devolución de Ropa ---\n");
+        scanner.nextLine();
+        System.out.print("Ingrese el DNI del cliente que realizó la compra: ");
+        String dniCliente = scanner.nextLine();
 
+        Cliente cliente = local.buscarClientePorDni(dniCliente);
 
+        if (cliente != null) {
+            System.out.println(local.mostrarStockRopa());
+            System.out.print("Ingrese el ID de la prenda que desea devolver: ");
+            int idPrendaDevuelta = scanner.nextInt();
+            scanner.nextLine();
+            Ropa prendaDevuelta = local.buscarRopaPorId(idPrendaDevuelta);
+            if (prendaDevuelta != null) {
+                if (prendaDevuelta.isDisponibilidad()) {
+                    local.devolverRopaAlStock(idPrendaDevuelta);
+                    local.AgregarRopaAlArchivo();
+                    System.out.println("\nLa prenda volvió al Stock!");
+                } else {
+                    System.out.println("La prenda seleccionada no está disponible para devolución.");
+                }
+            } else {
+                System.out.println("No se encontró la prenda con el ID especificado.");
+            }
+        } else {
+            System.out.println("El DNI ingresado no corresponde a ningún cliente. No se puede realizar la devolución.");
+        }
+}
 }
 
 

@@ -17,7 +17,7 @@ public class Local implements Serializable{
     private int altura;
     private String horarios;
     private Caja caja;
-    private ArrayList<Ropa> stockRopa;
+    private HashSet<Ropa> stockRopa;
     private HashSet<Empleado> empleados;
     private HashSet<Cliente> clientes;
 
@@ -26,7 +26,7 @@ public class Local implements Serializable{
         this.altura = 0;
         this.horarios = "";
         this.caja=new Caja();
-        this.stockRopa=new ArrayList<>();
+        this.stockRopa=new HashSet<>();
         this.empleados= new HashSet<>();
         this.clientes= new HashSet<>();
     }
@@ -35,7 +35,7 @@ public class Local implements Serializable{
         this.altura = altura;
         this.horarios = horarios;
         this.caja=new Caja();
-        this.stockRopa=new ArrayList<>();
+        this.stockRopa=new HashSet<>();
         this.empleados= new HashSet<>();
         this.clientes= new HashSet<>();
     }
@@ -50,7 +50,7 @@ public class Local implements Serializable{
     public String getHorarios() {
         return horarios;
     }
-    public ArrayList<Ropa> getStockRopa() {
+    public HashSet<Ropa> getStockRopa() {
         return stockRopa;
     }
     public void setDireccion(String direccion) {
@@ -184,11 +184,17 @@ public class Local implements Serializable{
         }
         return info;
     }
+    public void devolverRopaAlStock(int idPrenda) {
+        for (Ropa prenda : stockRopa) {
+            if (prenda.getId() == idPrenda) {
+                    prenda.setStock(prenda.getStock() + 1);
+            }
+        }
+    }
     public void comprarUnaRopa(Ropa ropa){
         try{
             ropa.validarStock(ropa.getStock());
             ropa.bajarUnStock();
-            caja.agregarDinero(ropa.getPrecio());
             caja.agregarRecaudacion(ropa.getPrecio());
         }catch (eSinStock e){
             e.printStackTrace();
@@ -384,7 +390,7 @@ public class Local implements Serializable{
             lo = (Local) objectInputStream.readObject();
 
             if (lo == null) {
-                lo.stockRopa = new ArrayList<>();
+                lo.stockRopa = new HashSet<>();
                 lo.empleados = new HashSet<>();
                 lo.clientes = new HashSet<>();
             }
