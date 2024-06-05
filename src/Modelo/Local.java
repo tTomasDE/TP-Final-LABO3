@@ -122,20 +122,67 @@ public class Local implements Serializable{
         c.setId(obtenerUltimoIdCliente()+1);
         this.clientes.add(c);
     }
+    private int obtenerUltimoIdRopa() {
+        int maxId = 0;
+        for (Ropa ropa : this.stockRopa) {
+            if (ropa.getId() > maxId) {
+                maxId = ropa.getId();
+            }
+        }
+        return maxId;
+    }
+    public boolean buscarIdPorRopa (int ID){
+        boolean rta=false;
+        for(Ropa ropa : this.stockRopa){
+            if(ropa.getId()==ID){
+                rta=true;
+            }
+        }
+        return rta;
+    }
+    public Ropa buscarRopaPorId(int id) {
+        Ropa ropaEncontrada = null;
+
+        for (Ropa rop : stockRopa) {
+            if (rop.getId() == id) {
+                ropaEncontrada = rop;
+            }
+        }
+
+        return ropaEncontrada;
+    }
     public void agregarRopaAlStock (Ropa r){
-        this.stockRopa.add(r);
+        boolean encontrada = false;
+        for (Ropa ropaExistente : stockRopa) {
+            if (ropaExistente.equals(r)) {
+                ropaExistente.setStock(ropaExistente.getStock() + r.getStock());
+                encontrada = true;
+            }
+        }
+        if (!encontrada) {
+            r.setId(obtenerUltimoIdRopa()+1);
+            stockRopa.add(r);
+        }
     }
     public String mostrarStockRopa() {
         String info="";
         int i=0;
         for(Ropa ro : this.stockRopa){
-            info+="["+i+"] "+ro.getTipo()+", "+ro.getTalle()+", "+ro.getColorRopa()+" | $"+ro.getPrecio()+"\n";
-            i++;
+            if(ro.isDisponibilidad()){
+            info+=ro.toString();
+        }
         }
         return info;
     }
-    public void procesarCompra(Compra c){
-        this.caja.agregarCompras(c);
+    public String mostrarStockRopaNoDisponible() {
+        String info="";
+        int i=0;
+        for(Ropa ro : this.stockRopa){
+            if(!ro.isDisponibilidad()){
+                info+=ro.toString();
+            }
+        }
+        return info;
     }
     public void comprarUnaRopa(Ropa ropa){
         try{
@@ -146,6 +193,19 @@ public class Local implements Serializable{
         }catch (eSinStock e){
             e.printStackTrace();
         }
+    }
+    public void agregarRecaudacion(double total){
+        this.caja.agregarRecaudacion(total);
+
+    }
+    public void retirarDinero(double retirar){
+        this.caja.retirarDinero(retirar);
+    }
+    public String imprimirRetiros(){
+        return this.caja.obtenerRetirosPorFecha();
+    }
+    public double getRecaudacion(){
+        return this.caja.getRecaudacion();
     }
     public void darDeBajaEmpleado(int ID){
         for(Empleado emp : this.empleados){
@@ -160,19 +220,6 @@ public class Local implements Serializable{
                 emp.setDisponible(true);
             }
         }
-    }
-    public boolean verificarDisponibilidad (Talle talle, String tipo){
-        boolean encontrado = false;
-
-        for(Ropa ropa : this.stockRopa){
-            if(ropa.getTalle()==talle && ropa.getTipo().equalsIgnoreCase(tipo)){
-                if(ropa.getStock()>0){
-                    encontrado=true;
-                }
-            }
-        }
-
-        return encontrado;
     }
     public void editarNombreCompletoEmpleado(int ID,String nombre, String Apellido){
         for(Empleado emp : this.empleados){
@@ -207,6 +254,15 @@ public class Local implements Serializable{
         }
         return hayDadosDeBaja;
     }
+    public boolean hayRopaDadaDeBaja() {
+        boolean hayDadosDeBaja = false;
+        for (Ropa ropa : this.stockRopa) {
+            if (!ropa.isDisponibilidad()) {
+                hayDadosDeBaja = true;
+            }
+        }
+        return hayDadosDeBaja;
+    }
     public boolean buscarIdEmpleado (int ID){
         boolean rta=false;
         for(Empleado emp : this.empleados){
@@ -231,6 +287,53 @@ public class Local implements Serializable{
             info+=cli.toString()+"\n";
         }
         return info;
+    }
+    public String filtrarRopaPorTipo(String tipo){
+        String info="";
+        int i=0;
+        for(Ropa ro : this.stockRopa){
+            if(ro.getTipo().equalsIgnoreCase(tipo)) {
+                info += "[" + i + "] " + ro.getTipo() + ", " + ro.getTalle() + ", " + ro.getColorRopa() + " | $" + ro.getPrecio() + "\n";
+                i++;
+            }
+        }
+        return info;
+    }
+    public String filtrarRopaPorTalle(Talle talle){
+        String info="";
+        int i=0;
+        for(Ropa ro : this.stockRopa){
+            if(ro.getTalle().equals(talle)) {
+                info += "[" + i + "] " + ro.getTipo() + ", " + ro.getTalle() + ", " + ro.getColorRopa() + " | $" + ro.getPrecio() + "\n";
+                i++;
+            }
+        }
+        return info;
+    }
+    public String filtrarRopaPorColor(String color){
+        String info="";
+        int i=0;
+        for(Ropa ro : this.stockRopa){
+            if(ro.getColorRopa().equalsIgnoreCase(color)) {
+                info += "[" + i + "] " + ro.getTipo() + ", " + ro.getTalle() + ", " + ro.getColorRopa() + " | $" + ro.getPrecio() + "\n";
+                i++;
+            }
+        }
+        return info;
+    }
+    public void darDeBajaRopa(int ID){
+        for(Ropa ropa : this.stockRopa){
+            if(ropa.isDisponibilidad() && ropa.getId()==ID){
+                ropa.setDisponibilidad(false);
+            }
+        }
+    }
+    public void darDeAltaRopa(int ID){
+        for(Ropa ropa : this.stockRopa){
+            if(!ropa.isDisponibilidad() && ropa.getId()==ID){
+                ropa.setDisponibilidad(true);
+            }
+        }
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////

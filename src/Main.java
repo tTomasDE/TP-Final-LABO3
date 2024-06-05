@@ -4,8 +4,9 @@ import Modelo.Humanos.Empleado;
 import Modelo.Local;
 import Modelo.Mercaderia.Ropa;
 import Modelo.Mercaderia.Talle;
-import java.io.*;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
 
 public class Main {
@@ -87,10 +88,11 @@ public class Main {
             System.out.println("\n---------------------------------------------------\n");
             System.out.println("\n-- Gestion del Local: \n");
             System.out.println("[1] Gestionar la informacion del Local\n");
-            System.out.println("[2] Gestionar Empleados\n");
-            System.out.println("[3] Gestionar el Historial de Clientes del Local\n");
-            System.out.println("[4] Gestionar el Stock de Ropa\n");
-            System.out.println("[5] Volver al Menu Principal\n");
+            System.out.println("[2] Gestionar el Stock de Ropa\n");
+            System.out.println("[3] Gestionar la Caja\n");
+            System.out.println("[4] Gestionar Empleados\n");
+            System.out.println("[5] Gestionar el Historial de Clientes del Local\n");
+            System.out.println("[6] Volver al Menu Principal\n");
             System.out.print("Ingrese su opción: ");
 
             int opcion = scanner.nextInt();
@@ -100,15 +102,18 @@ public class Main {
                 subMenuInformacionDelLocal(local);
                 break;
             case 2:
-                subMenuGestionEmpleados(local);
-                break;
-            case 3:
-                subMenuGestionClientesLocal (local);
-                break;
-            case 4:
                 subMenuGestionStockLocal(local);
                 break;
+            case 3:
+                subMenuGestionDeCaja(local);
+                break;
+            case 4:
+                subMenuGestionEmpleados(local);
+                break;
             case 5:
+                subMenuGestionClientesLocal (local);
+                break;
+            case 6:
                 salir=true;
                 break;
             default:
@@ -180,6 +185,53 @@ public class Main {
                     }
                     break;
                 case 3:
+                    salir = true;
+                    break;
+                default:
+                    System.out.println("\nOpcion no valida. Por favor,Ingrese de nuevo la opcion que desea\n");
+                    System.out.println("\n\n\n\n");
+                    break;
+            }
+        }
+    }
+    public static void subMenuGestionDeCaja(Local local){
+        boolean salir = false;
+
+        while (!salir) {
+            System.out.println("\n---------------------------------------------------\n");
+            System.out.println("\n--- Gestion de la Caja: \n");
+            System.out.println("[1] Ver Recaudacion \n");
+            System.out.println("[2] Agregar Dinero\n");
+            System.out.println("[3] Retirar Dinero\n");
+            System.out.println("[4] Ver Historial de Retiros de Dinero\n");
+            System.out.println("[5] Volver al Menu de Gestion de Stock del Local\n");
+            System.out.print("Ingrese su opción: ");
+
+            int opcion = scanner.nextInt();
+            System.out.println("\n");
+            switch (opcion) {
+                case 1:
+                    local.ObtenerLocalDelArchivo();
+                    System.out.println(local.getRecaudacion());
+                    local.AgregarLocalAlArchivo();
+                    break;
+                case 2:
+
+                    break;
+                case 3:
+                    local.ObtenerLocalDelArchivo();
+                    System.out.println("Ingrese la cantidad que desea Retirar: ");
+                    double retirar= scanner.nextDouble();
+                    local.retirarDinero(retirar);
+                    System.out.println("Retirado con Exito!");
+                    local.AgregarLocalAlArchivo();
+                    break;
+                case 4:
+                    local.ObtenerLocalDelArchivo();
+                    System.out.println(local.imprimirRetiros());
+                    local.AgregarLocalAlArchivo();
+                    break;
+                case 5:
                     salir = true;
                     break;
                 default:
@@ -267,7 +319,7 @@ public class Main {
                         System.out.println(local.imprimirEmpleados());
                         System.out.println("Ingrese el ID del Empleado que desea dar de Baja: ");
                         int darDeBaja = scanner.nextInt();
-                         if (!local.buscarIdEmpleado(darDeBaja)) {
+                        if (!local.buscarIdEmpleado(darDeBaja)) {
                         System.out.println("El ID ingresado no es válido. No se puede dar de baja a un empleado.");
                         } else {
                              local.darDeBajaEmpleado(darDeBaja);
@@ -341,10 +393,11 @@ public class Main {
             System.out.println("\n--- Gestion de Stock del Local: \n");
             System.out.println("[1] Ingresar Ropa al Stock\n");
             System.out.println("[2] Ver el Stock Disponible\n");
-            System.out.println("[3] Dar de Baja Ropa del Stock\n");
-            System.out.println("[4] Dar de Alta Ropa del Stock\n");
-            System.out.println("[5] Exportar el Stock de Ropa en Formarto .JSON\n");
-            System.out.println("[6] Volver al Menu de Gestion del Local\n");
+            System.out.println("[3] Filtrar Stock de Ropa\n");
+            System.out.println("[4] Dar de Baja Ropa del Stock\n");
+            System.out.println("[5] Dar de Alta Ropa del Stock\n");
+            System.out.println("[6] Exportar el Stock de Ropa en Formarto .JSON\n");
+            System.out.println("[7] Volver al Menu de Gestion del Local\n");
             System.out.print("Ingrese su opción: ");
 
             int opcion = scanner.nextInt();
@@ -358,15 +411,42 @@ public class Main {
                     System.out.println(local.mostrarStockRopa());
                     break;
                 case 3:
-
+                    subMenuVerificacionStock(local);
                     break;
                 case 4:
-
+                    local.ObtenerRopaDelArchivo();
+                    System.out.println(local.mostrarStockRopa());
+                    System.out.println("Seleccione el ID de la Prenda que Desea dar de Baja:");
+                    int darDeBaja = scanner.nextInt();
+                    if (!local.buscarIdPorRopa(darDeBaja)) {
+                        System.out.println("El ID ingresado no es válido. No se puede dar de baja.");
+                    } else {
+                        local.darDeBajaRopa(darDeBaja);
+                        local.AgregarRopaAlArchivo();
+                        System.out.println("\nAccion Realizada con Exito! ");
+                    }
                     break;
                 case 5:
-
+                    if (!local.hayRopaDadaDeBaja()) {
+                        System.out.println("No hay ropa para dar de alta.");
+                    } else {
+                        local.ObtenerRopaDelArchivo();
+                        System.out.println(local.mostrarStockRopaNoDisponible());
+                        System.out.println("Seleccione el ID de la Prenda que Desea dar de Alta:");
+                        int darDeAlta = scanner.nextInt();
+                        if (!local.buscarIdPorRopa(darDeAlta)) {
+                            System.out.println("El ID ingresado no es válido. No se puede dar de alta.");
+                        } else {
+                            local.darDeAltaRopa(darDeAlta);
+                            local.AgregarRopaAlArchivo();
+                            System.out.println("\nAccion Realizada con Exito! ");
+                        }
+                        }
                     break;
                 case 6:
+
+                    break;
+                case 7:
                     salir = true;
                     break;
                 default:
@@ -376,33 +456,32 @@ public class Main {
             }
             }
     }
-    public static void subMenuRealizarCompra(Local local, Cliente cliente, Compra compra){
-        boolean salir=false;
+    public static void subMenuVerificacionStock (Local local){
+        boolean salir = false;
 
-        while(!salir){
+        while (!salir) {
             System.out.println("\n---------------------------------------------------\n");
-            System.out.println("\n-- Gestion de la Compra: \n");
-            System.out.println("[1] Ver la Lista de Compra\n");
-            System.out.println("[2] Editar Lista de Compra\n");
-            System.out.println("[3] Procesar la Compra\n");
+            System.out.println("\n--- Filtrar el Stock: \n");
+            System.out.println("[1] Filtrar Ropa por Tipo\n");
+            System.out.println("[2] Filtrar Ropa por Talle\n");
+            System.out.println("[3] Filtrar Ropa por Color\n");
+            System.out.println("[4] Volver al Menu de Gestion de Stock del Local\n");
             System.out.print("Ingrese su opción: ");
 
             int opcion = scanner.nextInt();
             System.out.println("\n");
-            switch (opcion){
+            switch (opcion) {
                 case 1:
-                    System.out.println(compra.getItemsComprados());
+                    filtrarPorTipo(local);
                     break;
                 case 2:
-
+                    filtrarPorTalle(local);
                     break;
                 case 3:
-                    salir=true;
-                    cliente.setCompra(compra);
-                    cliente.agregarAlHistorialDeCompras(compra);
-                    local.agregarCliente(cliente);
-                    local.AgregarClientesAlArchivo();
-                    compra.crearPDF(local,cliente);
+                    filtrarPorColor(local);
+                    break;
+                case 4:
+                    salir = true;
                     break;
                 default:
                     System.out.println("\nOpcion no valida. Por favor,Ingrese de nuevo la opcion que desea\n");
@@ -429,12 +508,101 @@ public class Main {
             System.out.println(cliente.mostrarHistorial());
         }
 
-        ArrayList<Ropa>lista=crearListaDeCompras(local);
+        HashSet<Ropa> lista=crearListaDeCompras(local);
 
         Compra compra= new Compra(lista,new Empleado());
 
         subMenuRealizarCompra(local,cliente,compra);
 
+    }
+    public static void subMenuRealizarCompra(Local local, Cliente cliente, Compra compra){
+        boolean salir=false;
+
+        while(!salir){
+            System.out.println("\n---------------------------------------------------\n");
+            System.out.println("\n-- Gestion de la Compra: \n");
+            System.out.println("[1] Ver la Lista de Compra\n");
+            System.out.println("[2] Editar Lista de Compra\n");
+            System.out.println("[3] Procesar la Compra\n");
+            System.out.print("Ingrese su opción: ");
+
+            int opcion = scanner.nextInt();
+            System.out.println("\n");
+            switch (opcion){
+                case 1:
+                    System.out.println(compra.imprimirItemsComprados());
+                    break;
+                case 2:
+                    boolean editarLista = true;
+                    while (editarLista) {
+                        System.out.println("Seleccione una opcion: \n");
+                        System.out.println("[1] Agregar prenda\n");
+                        System.out.println("[2] Eliminar prenda\n");
+                        System.out.println("[3] Finalizar edición\n");
+                        System.out.print("Ingrese su opción: ");
+                        int opcionEdicion = scanner.nextInt();
+                        switch (opcionEdicion) {
+                            case 1:
+                                System.out.println(local.mostrarStockRopa());
+                                System.out.print("Seleccione el ID de la prenda que desea agregar: ");
+                                int idPrendaAgregar = scanner.nextInt();
+                                Ropa prendaAAgregar = local.buscarRopaPorId(idPrendaAgregar);
+                                if (prendaAAgregar != null) {
+                                    compra.agregarItems(prendaAAgregar);
+                                    System.out.println("Prenda agregada a la lista de compra.");
+                                    prendaAAgregar.bajarUnStock();
+                                } else {
+                                    System.out.println("No se encontró la prenda con el ID especificado.");
+                                }
+                                break;
+                            case 2:
+                                if (compra.getItemsComprados().isEmpty()) {
+                                    System.out.println("La lista de compra está vacía.");
+                                } else {
+                                    System.out.println("Lista de compra actual:");
+                                    System.out.println(compra.imprimirItemsComprados());
+                                    System.out.print("Ingrese el ID de la prenda que desea eliminar: ");
+                                    int idPrendaEliminar = scanner.nextInt();
+                                    Ropa prendaAEliminar = null;
+                                    for (Ropa prenda : compra.getItemsComprados()) {
+                                        if (prenda.getId() == idPrendaEliminar) {
+                                            prendaAEliminar = prenda;
+                                            break;
+                                        }
+                                    }
+                                    if (prendaAEliminar != null) {
+                                        compra.eliminarItem(prendaAEliminar);
+                                        System.out.println("Prenda eliminada de la lista de compra.");
+                                        prendaAEliminar.subirUnStock();
+                                    } else {
+                                        System.out.println("No se encontró la prenda en la lista de compra.");
+                                    }
+                                }
+                                break;
+                            case 3:
+                                editarLista = false;
+                                break;
+                            default:
+                                System.out.println("Opción no válida.");
+                                break;
+                        }
+                    }
+                    break;
+                case 3:
+                    salir=true;
+                    cliente.setCompra(compra);
+                    local.agregarRecaudacion(compra.getTotal());
+                    cliente.agregarAlHistorialDeCompras(compra);
+                    local.agregarCliente(cliente);
+                    local.AgregarClientesAlArchivo();
+                    compra.crearPDF(local,cliente);
+                    break;
+                default:
+                    System.out.println("\nOpcion no valida. Por favor,Ingrese de nuevo la opcion que desea\n");
+                    System.out.println("\n\n\n\n");
+                    break;
+            }
+        }
     }
     public static Ropa agregarRopa(){
         System.out.println("Dime el stock: ");
@@ -512,35 +680,76 @@ public class Main {
         System.out.println("------Cliente Registrado Exitosamente!------\n");
         return cliente;
     }
-    public static ArrayList<Ropa> crearListaDeCompras(Local local){
+    public static HashSet<Ropa> crearListaDeCompras(Local local){
 
-        ArrayList <Ropa> prendasSeleccionadas= new ArrayList<>();
+        HashSet <Ropa> prendasSeleccionadas= new HashSet<>();
 
         int op = 0;
         System.out.println("------Inicio Lista de Compras------\n");
+
         while(op==0){
 
         local.ObtenerRopaDelArchivo();
 
         System.out.println(local.mostrarStockRopa());
 
-        System.out.println("Seleccione el indice de la Prenda que desea:");
+        System.out.println("Seleccione el ID de la Prenda que desea:");
 
         int index= scanner.nextInt();
+        scanner.nextLine();
 
-        if (index >= 0 && index < local.getStockRopa().size()) {
-            Ropa seleccionada = local.getStockRopa().get(index);
+        Ropa seleccionada = local.buscarRopaPorId(index);
+
+            if (seleccionada != null && seleccionada.isDisponibilidad()) {
+
                 if (seleccionada.getStock() > 0) {
+
                     prendasSeleccionadas.add(seleccionada);
+
                     seleccionada.bajarUnStock();
+
+                    local.AgregarRopaAlArchivo();
+                } else {
+                    System.out.println("No hay stock disponible para la prenda seleccionada.");
                 }
-        }
-        System.out.print("¿Desea seleccionar otra prenda? Pulse 0 si asi lo desea : ");
+            } else {
+                System.out.println("La prenda seleccionada no está disponible.");
+            }
+
+
+            System.out.print("¿Desea seleccionar otra prenda? Pulse 0 si asi lo desea : ");
         op=scanner.nextInt();
         }
 
         return prendasSeleccionadas;
     }
+    public static void filtrarPorTipo(Local local){
+        scanner.nextLine();
+        System.out.println("Ingrese el Tipo de Prenda que desea Filtrar: ");
+        String tipo=scanner.nextLine();
+
+        local.ObtenerRopaDelArchivo();
+        System.out.println(local.filtrarRopaPorTipo(tipo));
+    }
+    public static void filtrarPorTalle(Local local){
+        scanner.nextLine();
+        System.out.println("Ingrese el Talle de Prenda que desea Filtrar: ");
+        String talle = scanner.nextLine().toUpperCase();
+        Talle tipo = Talle.valueOf(talle);
+
+        local.ObtenerRopaDelArchivo();
+        System.out.println(local.filtrarRopaPorTalle(tipo));
+    }
+    public static void filtrarPorColor(Local local){
+        scanner.nextLine();
+        System.out.println("Ingrese el Color de las Prendas que desea Filtrar: ");
+        String color=scanner.nextLine();
+
+        local.ObtenerRopaDelArchivo();
+        System.out.println(local.filtrarRopaPorColor(color));
+    }
+
+
 }
 
 

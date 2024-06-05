@@ -7,6 +7,7 @@ import Modelo.Mercaderia.Ropa;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.UUID;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -26,14 +27,14 @@ import com.lowagie.text.Image;
 public class Compra implements Serializable {
 
     private String ordenDeCompra;
-    private ArrayList<Ropa> itemsComprados;
+    private HashSet<Ropa> itemsComprados;
     private double total;
     private Empleado empleadoAtencion;
     private String fechaDeCompra;
 
     public Compra() {
     }
-    public Compra(ArrayList<Ropa> itemsComprados, Empleado empleadoAtencion) {
+    public Compra(HashSet<Ropa> itemsComprados, Empleado empleadoAtencion) {
         this.ordenDeCompra=calcularOrdenDeCompra();
         this.itemsComprados = itemsComprados;
         this.total = calcularTotal();
@@ -44,10 +45,17 @@ public class Compra implements Serializable {
     public String getOrdenDeCompra (){
         return this.ordenDeCompra;
     }
-    public String getItemsComprados(){
+
+    public HashSet<Ropa> getItemsComprados() {
+        return itemsComprados;
+    }
+
+    public String imprimirItemsComprados(){
         String info="\n";
         for(Ropa ro : this.itemsComprados){
-            info+=ro.getTipo()+", "+ro.getTalle()+", "+ro.getColorRopa()+" | $"+ro.getPrecio()+"\n";
+            if(ro.isDisponibilidad()){
+                info+=ro.toString();
+            }
         }
         return info;
     }
@@ -80,6 +88,10 @@ public class Compra implements Serializable {
     }
     public void agregarItems(Ropa ro){
         this.itemsComprados.add(ro);
+    }
+
+    public void eliminarItem(Ropa item) {
+        itemsComprados.remove(item);
     }
     public void crearPDF (Local local, Cliente cliente){
 
@@ -134,7 +146,7 @@ public class Compra implements Serializable {
             cb.lineTo(559, 575);
             cb.stroke();
 
-            document.add(new Paragraph("Items Comprados:\n\n"+getItemsComprados()));
+            document.add(new Paragraph("Items Comprados:\n\n"+imprimirItemsComprados()));
 
             cb.setLineWidth(1f);
             float x = 36;

@@ -1,43 +1,56 @@
 package Modelo.Finanzas;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 public class Caja implements Serializable {
 
-    private double cajaInicial;//Con cuanto arranca la caja en ese dia
+    private double cajaInicial;
     private double recaudacion;
-    private HashSet<Compra> comprasDelDia;
+    private HashMap<String, Double> retirosPorFecha;
 
     public Caja() {
         this.recaudacion=0;
-        this.comprasDelDia= new HashSet<>();
+        this.retirosPorFecha= new HashMap<>();
     }
 
     public double getRecaudacion() {
         return recaudacion;
     }
-
     public double getCajaInicial() {
         return cajaInicial;
     }
-
-
-    public void agregarCompras(Compra c){
-        this.comprasDelDia.add(c);
+    private String calcularFecha(){
+        LocalDate fechaActual = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String fechaFormateada = fechaActual.format(formatter);
+        return fechaFormateada;
     }
 
-    public double retirarDinero(double aRetirar){
-        if(aRetirar<=cajaInicial){
-            cajaInicial-=aRetirar;
+    public void retirarDinero(double aRetirar) {
+        if (aRetirar <= recaudacion) {
+            recaudacion -= aRetirar;
+            String fechaActual = calcularFecha();
+            retirosPorFecha.put(fechaActual, aRetirar);
         }
-        return cajaInicial;
     }
 
+    public String obtenerRetirosPorFecha() {
+        String retiros = "Retiros por Fecha:\n";
+        for (Map.Entry<String, Double> entry : retirosPorFecha.entrySet()) {
+            String fecha = entry.getKey();
+            double cantidad = entry.getValue();
+            retiros += "Fecha: " + fecha + ", Cantidad Retirada: " + cantidad + "\n";
+        }
+        return retiros;
+    }
     public void agregarDinero(double aAgregar){
         cajaInicial+=aAgregar;
     }
-
     public void agregarRecaudacion(double aAgregar){
         recaudacion+=aAgregar;
     }
