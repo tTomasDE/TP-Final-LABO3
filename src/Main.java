@@ -375,7 +375,9 @@ public class Main {
                     System.out.println(local.imprimirClientes());
                     break;
                 case 2:
-
+                    local.ObtenerClientesDelArchivo();
+                    local.exportarClientes();
+                    System.out.println("Clientes exportados correctamente.");
                     break;
                 case 3:
                     salir = true;
@@ -451,7 +453,9 @@ public class Main {
                         }
                     break;
                 case 7:
-
+                        local.ObtenerRopaDelArchivo();
+                        local.exportarStockRopa();
+                        System.out.println("El stock de ropa ha sido exportado en formato JSON a 'Stock_De_Ropa_Exportado.json'");
                     break;
                 case 8:
                     salir = true;
@@ -625,6 +629,7 @@ public class Main {
         int op = 0;
         while(op==0){
             localAux.agregarRopaAlStock(agregarRopa());
+            System.out.println(localAux.getStockRopa());
             System.out.println("Desea agregar otra prenda?\n(Escribi 0 si queres)");
             op=scanner.nextInt();
         }

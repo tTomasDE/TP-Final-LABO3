@@ -29,15 +29,13 @@ public class Cliente extends Persona {
     public void agregarAlHistorialDeCompras(Compra e){
         this.historialCompras.add(e);
     }
-
     public String mostrarHistorial (){
         String info="\nHistorial de Compras: \n\n";
         for(Compra com : historialCompras){
-            info+="Fecha de Compra: "+com.getFechaDeCompra()+"\n"+com.getItemsComprados()+"\n";
+            info+="Fecha de Compra: "+com.getFechaDeCompra()+"\n"+com.imprimirItemsComprados()+"\n";
         }
         return info;
     }
-
     @Override
     public String toString() {
         return super.toString()+"\n\n"+mostrarHistorial()+"\n";

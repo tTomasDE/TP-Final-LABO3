@@ -5,13 +5,21 @@ import Modelo.Finanzas.Caja;
 import Modelo.Finanzas.Compra;
 import Modelo.Humanos.Cliente;
 import Modelo.Humanos.Empleado;
+import Modelo.Interfaces.Exportable;
+import Modelo.Interfaces.FileManager;
+import Modelo.Interfaces.JsonUtiles;
 import Modelo.Mercaderia.Ropa;
 import Modelo.Mercaderia.Talle;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 
-public class Local implements Serializable{
+public class Local implements Serializable, Exportable , FileManager {
     private static final long serialVersionUID = -862208884450743488L;
     private String direccion;
     private int altura;
@@ -151,7 +159,7 @@ public class Local implements Serializable{
 
         return ropaEncontrada;
     }
-    public void agregarRopaAlStock (Ropa r){
+    public void agregarRopaAlStock(Ropa r) {
         boolean encontrada = false;
         for (Ropa ropaExistente : stockRopa) {
             if (ropaExistente.equals(r)) {
@@ -160,7 +168,10 @@ public class Local implements Serializable{
             }
         }
         if (!encontrada) {
-            r.setId(obtenerUltimoIdRopa()+1);
+            // Establecer el ID sólo si es necesario
+            if (r.getId() == 0) {
+                r.setId(obtenerUltimoIdRopa() + 1);
+            }
             stockRopa.add(r);
         }
     }
@@ -638,4 +649,64 @@ public class Local implements Serializable{
             }
         }
     }
+    public void exportarStockRopa() {
+        JSONArray jsonArray = new JSONArray();
+        try {
+            for (Ropa ro : this.stockRopa) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id", ro.getId());
+                jsonObject.put("tipo", ro.getTipo());
+                jsonObject.put("talle", ro.getTalle().toString());
+                jsonObject.put("color", ro.getColorRopa());
+                jsonObject.put("precio", ro.getPrecio());
+                jsonObject.put("stock", ro.getStock());
+                jsonObject.put("disponibilidad", ro.isDisponibilidad());
+                jsonArray.put(jsonObject);
+            }
+        } catch (JSONException exception) {
+            exception.printStackTrace();
+        }
+        JsonUtiles.grabar(jsonArray, "Stock_Ropa_Exportada");
+    }
+    public void exportarClientes() {
+        JSONArray jsonArrayClientes = new JSONArray();
+        for (Cliente cliente : clientes) {
+            JSONObject jsonObjectCliente = new JSONObject();
+            try {
+                jsonObjectCliente.put("dni", cliente.getDni());
+                jsonObjectCliente.put("apellido", cliente.getApellido());
+                jsonObjectCliente.put("nombre", cliente.getNombre());
+
+                JSONArray jsonArrayCompras = new JSONArray();
+                for (Compra compra : cliente.getHistorialCompras()) {
+                    JSONObject jsonObjectCompra = new JSONObject();
+                    jsonObjectCompra.put("fechaDeCompra", compra.getFechaDeCompra());
+
+                    JSONObject itemsCompradosObject = new JSONObject();
+                    for (Map.Entry<Ropa, Integer> entry : compra.getItemsComprados().entrySet()) {
+                        Ropa ropa = entry.getKey();
+                        JSONObject ropaObject = new JSONObject();
+                        ropaObject.put("tipo", ropa.getTipo());
+                        ropaObject.put("precio", ropa.getPrecio());
+                        ropaObject.put("color", ropa.getColorRopa());
+                        ropaObject.put("talle", ropa.getTalle().toString());
+
+                        itemsCompradosObject.put(String.valueOf(ropa.getId()), ropaObject);
+                        itemsCompradosObject.put(ropa.getId() + "_cantidad", entry.getValue());
+                    }
+                    jsonObjectCompra.put("itemsComprados", itemsCompradosObject);
+
+                    jsonArrayCompras.put(jsonObjectCompra);
+                }
+                jsonObjectCliente.put("historialCompras", jsonArrayCompras);
+
+                jsonArrayClientes.put(jsonObjectCliente);
+            } catch (JSONException exception) {
+                exception.printStackTrace();
+            }
+        }
+        JsonUtiles.grabar(jsonArrayClientes, "Clientes_Exportados");
+    }
+
+
 }
