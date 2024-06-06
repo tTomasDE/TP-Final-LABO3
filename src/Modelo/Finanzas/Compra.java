@@ -60,7 +60,6 @@ public class Compra implements Serializable {
         }
         return info.toString();
     }
-
     public double getTotal() {
         return total;
     }
@@ -88,8 +87,8 @@ public class Compra implements Serializable {
         return fechaFormateada;
     }
     public void agregarItems(Ropa ro) {
-        int cantidad = itemsComprados.getOrDefault(ro, 0); // Obtener la cantidad actual de la prenda
-        itemsComprados.put(ro, cantidad + 1); // Incrementar la cantidad o agregar una nueva entrada
+        int cantidad = itemsComprados.getOrDefault(ro, 0);
+        itemsComprados.put(ro, cantidad + 1);
     }
     public void eliminarItem(Ropa item) {
         int cantidad = itemsComprados.getOrDefault(item, 0);

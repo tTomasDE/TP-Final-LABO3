@@ -1,8 +1,10 @@
 package Modelo.Envolventes;
 
+import java.io.Serializable;
 import java.util.HashSet;
 
-public class GestorHashSet <T> {
+public class GestorHashSet <T> implements Serializable {
+
     private HashSet<T> conjunto;
 
     public GestorHashSet() {

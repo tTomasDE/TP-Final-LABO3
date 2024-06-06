@@ -1,5 +1,7 @@
 package Modelo;
 
+import Modelo.Excepciones.eEmpleadoNoEncontrado;
+import Modelo.Excepciones.eRopaNoEncontrada;
 import Modelo.Excepciones.eSinStock;
 import Modelo.Finanzas.Caja;
 import Modelo.Finanzas.Compra;
@@ -168,7 +170,6 @@ public class Local implements Serializable, Exportable , FileManager {
             }
         }
         if (!encontrada) {
-            // Establecer el ID sólo si es necesario
             if (r.getId() == 0) {
                 r.setId(obtenerUltimoIdRopa() + 1);
             }
@@ -202,15 +203,6 @@ public class Local implements Serializable, Exportable , FileManager {
             }
         }
     }
-    public void comprarUnaRopa(Ropa ropa){
-        try{
-            ropa.validarStock(ropa.getStock());
-            ropa.bajarUnStock();
-            caja.agregarRecaudacion(ropa.getPrecio());
-        }catch (eSinStock e){
-            e.printStackTrace();
-        }
-    }
     public void agregarRecaudacion(double total){
         this.caja.agregarRecaudacion(total);
 
@@ -224,18 +216,46 @@ public class Local implements Serializable, Exportable , FileManager {
     public double getRecaudacion(){
         return this.caja.getRecaudacion();
     }
-    public void darDeBajaEmpleado(int ID){
-        for(Empleado emp : this.empleados){
-            if(emp.isDisponible() && emp.getId()==ID){
-                emp.setDisponible(false);
-            }
+    public String manejarDarDeBajaEmpleado(int ID) {
+        try {
+            darDeBajaEmpleado(ID);
+            return "Empleado dado de baja con éxito: " + ID;
+        } catch (eEmpleadoNoEncontrado e) {
+            return e.getMessage();
         }
     }
-    public void darDeAltaEmpleado(int ID){
-        for(Empleado emp : this.empleados){
-            if(!emp.isDisponible() && emp.getId()==ID){
-                emp.setDisponible(true);
+    public void darDeBajaEmpleado(int ID) throws eEmpleadoNoEncontrado {
+        boolean empleadoEncontrado = false;
+        for(Empleado emp : this.empleados) {
+            if(emp.isDisponible() && emp.getId() == ID) {
+                emp.setDisponible(false);
+                empleadoEncontrado = true;
+                break;
             }
+        }
+        if (!empleadoEncontrado) {
+            throw new eEmpleadoNoEncontrado("No se encontró ningún empleado con el ID especificado.");
+        }
+    }
+    public void darDeAltaEmpleado(int ID) throws eEmpleadoNoEncontrado {
+        boolean empleadoEncontrado = false;
+        for(Empleado emp : this.empleados) {
+            if(!emp.isDisponible() && emp.getId() == ID) {
+                emp.setDisponible(true);
+                empleadoEncontrado = true;
+                break;
+            }
+        }
+        if (!empleadoEncontrado) {
+            throw new eEmpleadoNoEncontrado("No se encontró ningún empleado con el ID especificado.");
+        }
+    }
+    public String manejarDarDeAltaEmpleado(int ID) {
+        try {
+            darDeAltaEmpleado(ID);
+            return "Empleado dado de alta con éxito: " + ID;
+        } catch (eEmpleadoNoEncontrado e) {
+            return e.getMessage();
         }
     }
     public void editarNombreCompletoEmpleado(int ID,String nombre, String Apellido){
@@ -258,6 +278,14 @@ public class Local implements Serializable, Exportable , FileManager {
         for(Empleado emp : this.empleados){
             if(emp.isDisponible() && ID==emp.getId()){
                 emp.setHorarios(Horario);
+
+            }
+        }
+    }
+    public void editarDNIEmpleado(int ID,String DNI){
+        for(Empleado emp : this.empleados){
+            if(emp.isDisponible() && ID==emp.getId()){
+                emp.setDni(DNI);
 
             }
         }
@@ -338,18 +366,46 @@ public class Local implements Serializable, Exportable , FileManager {
         }
         return info;
     }
-    public void darDeBajaRopa(int ID){
-        for(Ropa ropa : this.stockRopa){
-            if(ropa.isDisponibilidad() && ropa.getId()==ID){
+    public void darDeBajaRopa(int ID) throws eRopaNoEncontrada {
+        boolean encontrada = false;
+        for (Ropa ropa : this.stockRopa) {
+            if (ropa.isDisponibilidad() && ropa.getId() == ID) {
                 ropa.setDisponibilidad(false);
+                encontrada = true;
+                break;
             }
         }
+        if (!encontrada) {
+            throw new eRopaNoEncontrada("La prenda con ID: " + ID + " no se encuentra en el stock o ya está dada de baja.");
+        }
     }
-    public void darDeAltaRopa(int ID){
-        for(Ropa ropa : this.stockRopa){
-            if(!ropa.isDisponibilidad() && ropa.getId()==ID){
+    public String manejarDarDeBajaRopa(int ID) {
+        try {
+            darDeBajaRopa(ID);
+            return "Ropa dada de baja con éxito: " + ID;
+        } catch (eRopaNoEncontrada e) {
+            return e.getMessage();
+        }
+    }
+    public void darDeAltaRopa(int ID) throws eRopaNoEncontrada {
+        boolean encontrada = false;
+        for (Ropa ropa : this.stockRopa) {
+            if (!ropa.isDisponibilidad() && ropa.getId() == ID) {
                 ropa.setDisponibilidad(true);
+                encontrada = true;
+                break;
             }
+        }
+        if (!encontrada) {
+            throw new eRopaNoEncontrada("La prenda con ID: " + ID + " no se encuentra en el stock o ya está dada de alta.");
+        }
+    }
+    public String manejarDarDeAltaRopa(int ID) {
+        try {
+            darDeAltaRopa(ID);
+            return "Ropa dada de alta con éxito: " + ID;
+        } catch (eRopaNoEncontrada e) {
+            return e.getMessage();
         }
     }
 
@@ -409,10 +465,10 @@ public class Local implements Serializable, Exportable , FileManager {
         } catch (EOFException ex) {
 
         } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
+
         } catch (IOException ex) {
 
-            ex.printStackTrace();
+
         } catch (ClassNotFoundException e) {
 
         } finally {
@@ -548,36 +604,29 @@ public class Local implements Serializable, Exportable , FileManager {
             while (true) {
                 Empleado emp = (Empleado) objectInputStream.readObject();
                 this.empleados.add(emp);
-
             }
 
-
-        } catch (EOFException ex)
-        {
-
-        }
-        catch (FileNotFoundException ex)
-        {
-            ex.printStackTrace();
-        }
-        catch (IOException exception)
-        {
+        } catch (EOFException ex) {
+            // Fin del archivo, no se necesita hacer nada aquí
+        } catch (FileNotFoundException ex) {
+            // Si el archivo no existe, no hay empleados que cargar
+            System.out.println("El archivo de empleados no existe.");
+        } catch (IOException exception) {
+            // Otras excepciones de E/S
             exception.printStackTrace();
-        }
-        catch (ClassNotFoundException e)
-        {
+        } catch (ClassNotFoundException e) {
+            // Clase de objeto no encontrada
             throw new RuntimeException(e);
-        } finally
-        {
-            try
-            {
-                objectInputStream.close();
+        } finally {
+            try {
+                // Cerrar el ObjectInputStream solo si no es nulo
+                if (objectInputStream != null) {
+                    objectInputStream.close();
+                }
+            } catch (IOException ex) {
+                // Manejar errores al cerrar el flujo
+                ex.printStackTrace();
             }
-            catch (IOException ex)
-            {
-
-            }
-
         }
     }
     public void AgregarClientesAlArchivo (){

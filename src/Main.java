@@ -6,6 +6,7 @@ import Modelo.Mercaderia.Ropa;
 import Modelo.Mercaderia.Talle;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Main {
 
@@ -27,20 +28,17 @@ public class Main {
 }
     public static Local ingresarInformacionInicial() {
 
-        System.out.println("\nBienvenido! Parece que es la primera vez que ejecutas el programa.\n");
+        System.out.println("\nBienvenido! Parece que es la primera vez que ejecutas el programa.");
         System.out.println("\nPor favor, ingresa la información del local.\n");
 
         System.out.print("Dirección: \n");
-        String direccion = scanner.nextLine();
-
+        String direccion = validarString();
 
         System.out.print("Altura: \n");
-        int altura = scanner.nextInt();
-
-        scanner.nextLine();
+        int altura = validarEntero();
 
         System.out.print("Horarios: \n");
-        String horarios = scanner.nextLine();
+        String horarios = validarHorario();
 
         Local local=new Local(direccion,altura,horarios);
 
@@ -156,9 +154,9 @@ public class Main {
                                 System.out.println("La Actual Direccion es : " + local.getDireccion() + " " + local.getAltura() + ", Por cual desea cambiarla?\n");
                                 System.out.println("Calle: ");
                                 scanner.nextLine();
-                                String nuevaDire = scanner.nextLine();
+                                String nuevaDire = validarString();
                                 System.out.println("Altura: ");
-                                int nuevaAltu = scanner.nextInt();
+                                int nuevaAltu = validarEntero() ;
                                 scanner.nextLine();
                                 local.setDireccion(nuevaDire);
                                 local.setAltura(nuevaAltu);
@@ -168,7 +166,7 @@ public class Main {
                                 System.out.println("El horario actual es : " + local.getHorarios() +", Por cual desea cambiarlo?\n");
                                 System.out.println("Nuevo Horario: ");
                                 scanner.nextLine();
-                                String nuevoHorario = scanner.nextLine();
+                                String nuevoHorario = validarHorario();
                                 local.setHorarios(nuevoHorario);
                                 local.AgregarLocalAlArchivo();
                                 break;
@@ -271,7 +269,8 @@ public class Main {
                     local.ObtenerEmpleadosDelArchivo();
                     System.out.println(local.imprimirEmpleados());
                     System.out.println("Ingrese el ID del Empleado que desea editar: ");
-                    int editar= scanner.nextInt();
+                    scanner.nextLine();
+                    int editar= validarEntero();
                     boolean salirAux = false;
                     while (!salirAux) {
                         System.out.println("\n---------------------------------------------------\n");
@@ -279,7 +278,8 @@ public class Main {
                         System.out.println("[1] Editar el Nombre y Apellido\n");
                         System.out.println("[2] Editar el Horario\n");
                         System.out.println("[3] Modificar el Salario\n");
-                        System.out.println("[4] Volver al Menu de Gestion de Empleados\n");
+                        System.out.println("[4] Editar DNI\n");
+                        System.out.println("[5] Volver al Menu de Gestion de Empleados\n");
                         System.out.print("Ingrese su opción: ");
                         int opcionAux = scanner.nextInt();
                         System.out.println("\n");
@@ -287,26 +287,33 @@ public class Main {
                             case 1:
                                 scanner.nextLine();
                                 System.out.println("Ingrese el nuevo nombre: ");
-                                String nuevoNombre=scanner.nextLine();
+                                String nuevoNombre=validarString();
                                 System.out.println("Ingrese el nuevo apellido: ");
-                                String nuevoApellido=scanner.nextLine();
+                                String nuevoApellido=validarString();
                                 local.editarNombreCompletoEmpleado(editar,nuevoNombre,nuevoApellido);
                                 local.AgregarEmpleadosAlArchivo();
                                 break;
                             case 2:
                                 scanner.nextLine();
                                 System.out.println("Ingrese el nuevo horario: ");
-                                String nuevoHorario=scanner.nextLine();
+                                String nuevoHorario=validarHorario();
                                 local.editarHorariosEmpleado(editar,nuevoHorario);
                                 local.AgregarEmpleadosAlArchivo();
                                 break;
                             case 3:
                                 System.out.println("Ingrese el nuevo salario: ");
-                                double nuevoSalario=scanner.nextDouble();
+                                double nuevoSalario=validarDouble();
                                 local.editarSalarioEmpleado(editar,nuevoSalario);
                                 local.AgregarEmpleadosAlArchivo();
                                 break;
                             case 4:
+                                scanner.nextLine();
+                                System.out.println("Ingrese el nuevo DNI: ");
+                                String nuevoDNI = validarDNI();
+                                local.editarDNIEmpleado(editar, nuevoDNI);
+                                local.AgregarEmpleadosAlArchivo();
+                                break;
+                            case 5:
                                 salirAux=true;
                                 break;
                             default:
@@ -321,13 +328,8 @@ public class Main {
                         System.out.println(local.imprimirEmpleados());
                         System.out.println("Ingrese el ID del Empleado que desea dar de Baja: ");
                         int darDeBaja = scanner.nextInt();
-                        if (!local.buscarIdEmpleado(darDeBaja)) {
-                        System.out.println("El ID ingresado no es válido. No se puede dar de baja a un empleado.");
-                        } else {
-                             local.darDeBajaEmpleado(darDeBaja);
-                             local.AgregarEmpleadosAlArchivo();
-                             System.out.println("\nAccion Realizada con Exito! ");
-                         }
+                        System.out.println(local.manejarDarDeBajaEmpleado(darDeBaja));
+                        local.AgregarEmpleadosAlArchivo();
                     break;
                 case 5:
                     if (!local.hayEmpleadosDadosDeBaja()) {
@@ -337,13 +339,8 @@ public class Main {
                         System.out.println(local.imprimirEmpleadosDadosDeBaja());
                         System.out.println("Ingrese el ID del Empleado que desea dar de Alta: ");
                         int darDeAlta = scanner.nextInt();
-                        if (!local.buscarIdEmpleado(darDeAlta)) {
-                            System.out.println("El ID ingresado no es válido. No se puede dar de alta a un empleado.");
-                        } else {
-                        local.darDeAltaEmpleado(darDeAlta);
+                        System.out.println(local.manejarDarDeAltaEmpleado(darDeAlta));
                         local.AgregarEmpleadosAlArchivo();
-                        System.out.println("\nAccion Realizada con Exito! ");
-                    }
                     }
                     break;
                 case 6:
@@ -427,13 +424,8 @@ public class Main {
                     System.out.println(local.mostrarStockRopa());
                     System.out.println("Seleccione el ID de la Prenda que Desea dar de Baja:");
                     int darDeBaja = scanner.nextInt();
-                    if (!local.buscarIdPorRopa(darDeBaja)) {
-                        System.out.println("El ID ingresado no es válido. No se puede dar de baja.");
-                    } else {
-                        local.darDeBajaRopa(darDeBaja);
-                        local.AgregarRopaAlArchivo();
-                        System.out.println("\nAccion Realizada con Exito! ");
-                    }
+                    System.out.println(local.manejarDarDeBajaRopa(darDeBaja));
+                    local.AgregarRopaAlArchivo();
                     break;
                 case 6:
                     if (!local.hayRopaDadaDeBaja()) {
@@ -443,13 +435,8 @@ public class Main {
                         System.out.println(local.mostrarStockRopaNoDisponible());
                         System.out.println("Seleccione el ID de la Prenda que Desea dar de Alta:");
                         int darDeAlta = scanner.nextInt();
-                        if (!local.buscarIdPorRopa(darDeAlta)) {
-                            System.out.println("El ID ingresado no es válido. No se puede dar de alta.");
-                        } else {
-                            local.darDeAltaRopa(darDeAlta);
-                            local.AgregarRopaAlArchivo();
-                            System.out.println("\nAccion Realizada con Exito! ");
-                        }
+                        System.out.println(local.manejarDarDeAltaRopa(darDeAlta));
+                        local.AgregarRopaAlArchivo();
                         }
                     break;
                 case 7:
@@ -505,7 +492,7 @@ public class Main {
         scanner.nextLine();
 
         System.out.println("Ingrese el DNI: ");
-        String buscarDni = scanner.nextLine();
+        String buscarDni = validarDNI();
 
         local.ObtenerClientesDelArchivo();
 
@@ -610,18 +597,18 @@ public class Main {
     }
     public static Ropa agregarRopa(){
         System.out.println("Dime el stock: ");
-        int stock = scanner.nextInt();
+        int stock = validarEntero();
         scanner.nextLine();
         System.out.println("Dime el tipo de prenda: ");
-        String prenda = scanner.nextLine();
+        String prenda = validarString();
         System.out.println("Dime el talle (XS, S, M, L, XL, XXL): ");
         String talleAux = scanner.nextLine().toUpperCase();
         Talle talle = Talle.valueOf(talleAux);
         System.out.println("Dime el precio: ");
-        double precio = scanner.nextDouble();
+        double precio = validarDouble();
         scanner.nextLine();
         System.out.println("Dime el color de la prenda: ");
-        String color = scanner.nextLine();
+        String color = validarString();
         Ropa ropaAux = new Ropa(stock, prenda, talle, precio, color);
         return ropaAux;
     }
@@ -638,20 +625,19 @@ public class Main {
     public static Empleado crearEmpleado(){
         scanner.nextLine();
         System.out.println("Dime el apellido");
-        String apellido = scanner.nextLine();
+        String apellido = validarString();
 
         System.out.println("Dime el nombre");
-        String nombre = scanner.nextLine();
+        String nombre = validarString();
 
         System.out.println("Dime el dni");
-        String dni = scanner.nextLine();
+        String dni = validarDNI();
 
         System.out.println("Dime el horario: ");
-        String horario = scanner.nextLine();
+        String horario = validarHorario();
 
         System.out.println("Dime el salario: ");
-        double salario = scanner.nextDouble();
-        scanner.nextLine();
+        double salario = validarDouble();
 
         Empleado emp = new Empleado(nombre, apellido, dni, salario, horario);
 
@@ -673,10 +659,10 @@ public class Main {
         System.out.println("------Inicio Registro Cliente------\n");
 
         System.out.println("Dime el apellido");
-        String apellido = scanner.nextLine();
+        String apellido = validarString();
 
         System.out.println("Dime el nombre");
-        String nombre = scanner.nextLine();
+        String nombre = validarString();
 
         Cliente cliente = new Cliente (nombre, apellido, dni);
         System.out.println("------Cliente Registrado Exitosamente!------\n");
@@ -777,7 +763,70 @@ public class Main {
             System.out.println("El DNI ingresado no corresponde a ningún cliente. No se puede realizar la devolución.");
         }
 }
+    private static String validarString() {
+        String input = scanner.nextLine().trim();
+        while (input.isEmpty() || contieneNumeros(input)) {
+            System.out.println("Por favor, ingrese un string válido que no contenga números:");
+            input = scanner.nextLine().trim();
+        }
+        return input;
+    }
+    private static boolean contieneNumeros(String str) {
+        for (char c : str.toCharArray()) {
+            if (Character.isDigit(c)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private static double validarDouble() {
+        while (true) {
+            String input = scanner.nextLine().trim();
+            if (esDouble(input)) {
+                return Double.parseDouble(input);
+            } else {
+                System.out.println("Debe ingresar un número double válido. Por favor, inténtelo nuevamente:");
+            }
+        }
+    }
+    private static boolean esDouble(String input) {
+        return input.matches("-?\\d*\\.?\\d+");
+    }
+    private static String validarDNI() {
+        String input = scanner.nextLine().trim();
+        while (!input.matches("\\d{8}|\\d{8}-[A-Za-z]")) {
+            System.out.println("Por favor, ingrese un DNI válido:");
+            input = scanner.nextLine().trim();
+        }
+        return input;
+    }
+    private static String validarHorario() {
+        String input = scanner.nextLine().trim();
+        String regex = "\\d{2}:\\d{2}-\\d{2}:\\d{2}";
+
+        while (!input.matches(regex)) {
+            System.out.println("Formato de horario no válido. Por favor, ingrese un horario válido (por ejemplo, 09:00-10:00):");
+            input = scanner.nextLine().trim();
+        }
+
+        return input;
+    }
+    private static int validarEntero() {
+        while (true) {
+            String input = scanner.nextLine().trim();
+            if (esEntero(input)) {
+                return Integer.parseInt(input);
+            } else {
+                System.out.println("No ha ingresado un número entero válido. Por favor, intente nuevamente:");
+            }
+        }
+    }
+    private static boolean esEntero(String input) {
+        return Pattern.matches("-?\\d+", input);
+    }
 }
+
+
 
 
 
